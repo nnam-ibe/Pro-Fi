@@ -83,11 +83,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         public boolean onMenuItemClick(MenuItem item) {
                             if(item.getTitle().equals("Delete")){delete_Diag(v);}
-                            Toast.makeText(
-                                    v.getContext(),
-                                    "You Clicked : " + item.getTitle(),
-                                    Toast.LENGTH_SHORT
-                            ).show();
+//                            Toast.makeText(
+//                                    v.getContext(),
+//                                    "You Clicked : " + item.getTitle(),
+//                                    Toast.LENGTH_SHORT
+//                            ).show();
                             return true;
                         }
                     });

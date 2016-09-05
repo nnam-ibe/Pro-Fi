@@ -1,19 +1,18 @@
 package stabs.com.pro_fi;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Switch;
+import android.widget.TextView;
+
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -28,11 +27,13 @@ public class MainActivity extends AppCompatActivity {
      */
     private GoogleApiClient client;
     private Switch myswitch;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myswitch = (Switch) findViewById(R.id.mySwitch);
+        final TextView switchstatus=(TextView) findViewById(R.id.switchStatus);
+        SwitchCompat mainswitch = (SwitchCompat) findViewById(R.id.compatSwitch);
         ArrayList<String> list = new ArrayList<String>();
         list.add("Home");
         list.add("Work");
@@ -50,12 +51,30 @@ public class MainActivity extends AppCompatActivity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        mainswitch.setChecked(false);
+        switchstatus.setText("Mode:    Manual");
+        mainswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled
+                    switchstatus.setText("Mode:    Automatic");
+                } else {
+                    switchstatus.setText("Mode:    Manual");
+
+                    // The toggle is disabled
+                }
+            }
+        });
     }
 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+    public void add_method(View v){
+        Intent myIntent=new Intent(this,add0_activity.class);
+        startActivity(myIntent);
     }
 
     public void refreshConnection(View view) {
