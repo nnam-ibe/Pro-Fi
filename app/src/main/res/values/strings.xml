@@ -3,4 +3,16 @@
     <string name="current_wifi_connection">Current Wifi Connection</string>
     <string name="refresh_wi_fi_connection">Refresh Wi-Fi Connection</string>
     <string name="dummy_text">Dummy Text</string>
+    <string name="automatic">Automatic</string>
+    <string name="edit">Edit</string>
+    <string name="Delete">Delete</string>
+    <string name="vertical_ellipsis">&#8942;</string>
+    <string name="switch_mode">Mode</string>
+    <string name="ringtone">RingTone</string>
+    <string name="Media">Media</string>
+    <string name="notification">Notification</string>
+    <string name="system">System</string>
+    <string name="prof_Name">Name:</string>
+    <string name="title_activity_add_">add_Activity</string>
+    <string name="title_activity_add1_activity">add1</string>
 </resources>
