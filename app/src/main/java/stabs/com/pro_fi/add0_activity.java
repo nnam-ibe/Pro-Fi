@@ -1,16 +1,19 @@
 package stabs.com.pro_fi;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.graphics.Color;
 
 public class add0_activity extends AppCompatActivity {
 private SeekBar ring,notif,media,sys;
@@ -24,8 +27,8 @@ private SeekBar ring,notif,media,sys;
 
         et=(EditText)findViewById(R.id.nameTxt);
         imb=(FloatingActionButton)findViewById(R.id.next);
-        imb.setVisibility(View.INVISIBLE);
-
+        imb.setEnabled(false);
+        imb.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.disabledColor)));
 
 
         et.addTextChangedListener(new TextWatcher() {
@@ -33,13 +36,15 @@ private SeekBar ring,notif,media,sys;
             @Override
             public void onTextChanged(CharSequence s, int start, int before,
                                       int count) {
-
+                Log.i("Name", s.toString());
                 if (s.toString().equals("")) {
+                    imb.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.disabledColor)));
                     imb.setEnabled(false);
-                    imb.setVisibility(View.INVISIBLE);
+                    //imb.setVisibility(View.INVISIBLE);
                 } else {
-                    imb.setVisibility(View.VISIBLE);
+                    imb.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimaryDark)));
                     imb.setEnabled(true);
+                    //imb.setVisibility(View.VISIBLE);
                 }
             }
 
