@@ -63,10 +63,10 @@ private SeekBar ring,notif,media,sys;
 
 
 
-        ring = (SeekBar) findViewById(R.id.ring_seek);
-        notif = (SeekBar) findViewById(R.id.notif_seek);
-        media = (SeekBar) findViewById(R.id.Media_seek);
-        sys = (SeekBar) findViewById(R.id.sys_seek);
+        ring = (SeekBar) findViewById(R.id.ringtone_seekbar);
+        notif = (SeekBar) findViewById(R.id.notifications_seekbar);
+        media = (SeekBar) findViewById(R.id.media_seekbar);
+        sys = (SeekBar) findViewById(R.id.system_seekbar);
         SeekBar [] sound={ring,notif,media,sys};
         for (int i = 0; i < sound.length; i++) {
           sound[i].setScaleY(scale);

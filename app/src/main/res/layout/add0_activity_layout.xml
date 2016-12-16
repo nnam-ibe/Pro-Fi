@@ -16,99 +16,180 @@
         android:layout_height="wrap_content"
         android:inputType="textNoSuggestions"
         android:ems="12"
+        android:textAlignment="center"
         android:hint=" Name"
         android:id="@+id/nameTxt"
         android:layout_marginTop="30dp"
         android:textSize="20sp"
+        android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
         android:backgroundTint="#e3dfdf"
          />
 
-    <TextView
+    <RelativeLayout
+        android:id="@+id/ringtone_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/RingText"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="70dp"
-        android:layout_marginBottom="5dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/ringtone"
-        android:textStyle="italic"
-        android:layout_below="@id/nameTxt"
-        />
+        android:layout_below="@+id/nameTxt"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
 
-    <SeekBar
-        android:id="@+id/ring_seek"
-        android:layout_width="220sp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_below="@id/RingText"
-        android:progress="20"
-        />
-    <TextView
+        <TextView
+            android:id="@+id/ringText"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="5dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/ringtone"
+            android:textStyle="italic"
+            />
+        <ImageView
+            android:id="@+id/iconRingtone"
+            android:layout_below="@+id/ringText"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:background="@drawable/ic_ringtone" />
+
+        <SeekBar
+            android:id="@+id/ringtone_seekbar"
+            android:layout_below="@id/ringText"
+            android:layout_toRightOf="@id/iconRingtone"
+            android:layout_width="220sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="35dp"
+            android:progress="20"
+            android:progressTint="@color/colorPrimary"
+            android:thumbTint="@color/colorPrimary"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/media_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/MediaText"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="5dp"
-        android:layout_below="@id/ring_seek"
-        android:textStyle="italic"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/Media"
-        />
+        android:layout_below="@+id/ringtone_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
 
-    <SeekBar
-        android:id="@+id/Media_seek"
-        android:layout_width="220sp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_below="@id/MediaText"
-        android:layout_alignParentLeft="true"
-        android:progress="20"
-         />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mediaText"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="5dp"
+            android:textStyle="italic"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/Media"
+            />
 
-    <TextView
+        <ImageView
+            android:id="@+id/iconMedia"
+            android:layout_below="@+id/mediaText"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:background="@drawable/ic_media" />
+
+        <SeekBar
+            android:id="@+id/media_seekbar"
+            android:layout_below="@id/mediaText"
+            android:layout_toRightOf="@id/iconMedia"
+            android:layout_width="220sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="35dp"
+            android:progress="20"
+            android:progressTint="@color/colorPrimary"
+            android:thumbTint="@color/colorPrimary"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/notifications_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/notif_txt"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="5dp"
-        android:textStyle="italic"
-        android:layout_below="@id/Media_seek"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/notification"
-        />
-    <SeekBar
-        android:id="@+id/notif_seek"
-        android:layout_width="220sp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_below="@id/notif_txt"
-        android:layout_alignParentLeft="true"
-        android:progress="20"
-        />
-    <TextView
+        android:layout_below="@+id/media_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/notifications_txt"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="5dp"
+            android:textStyle="italic"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/notifications"
+            />
+
+        <ImageView
+            android:id="@+id/iconNotifications"
+            android:layout_below="@+id/notifications_txt"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:background="@drawable/ic_notifications" />
+
+        <SeekBar
+            android:id="@+id/notifications_seekbar"
+            android:layout_below="@id/notifications_txt"
+            android:layout_toRightOf="@id/iconNotifications"
+            android:layout_width="220sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="35dp"
+            android:progress="20"
+            android:progressTint="@color/colorPrimary"
+            android:thumbTint="@color/colorPrimary"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/system_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/sys_txt"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="5dp"
-        android:textStyle="italic"
-        android:layout_below="@id/notif_seek"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/system"
-        />
-    <SeekBar
-        android:id="@+id/sys_seek"
-        android:layout_width="220sp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_below="@id/sys_txt"
-        android:layout_alignParentLeft="true"
-        android:progress="20"
-        />
+        android:layout_below="@+id/notifications_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/system_txt"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="5dp"
+            android:textStyle="italic"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/system"
+            />
 
+        <ImageView
+            android:id="@+id/iconSystem"
+            android:layout_below="@+id/system_txt"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:background="@drawable/ic_system" />
+
+        <SeekBar
+            android:id="@+id/system_seekbar"
+            android:layout_below="@id/system_txt"
+            android:layout_toRightOf="@id/iconSystem"
+            android:layout_width="220sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="35dp"
+            android:progress="20"
+            android:progressTint="@color/colorPrimary"
+            android:thumbTint="@color/colorPrimary"/>
+
+    </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/next"
@@ -121,6 +202,8 @@
         android:layout_centerInParent="true"
         android:layout_alignParentBottom="true"
         app:backgroundTint="@color/colorPrimaryDark" />
+
+    <!--
     <Switch
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -133,5 +216,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/nameTxt"
         />
-
+    -->
 </RelativeLayout>
+    <!--android:layout_below="@id/nameTxt"
+               -->
