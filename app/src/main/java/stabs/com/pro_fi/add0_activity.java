@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.graphics.Color;
+import android.widget.Toast;
 
 public class add0_activity extends AppCompatActivity {
 private SeekBar ring,notif,media,sys;
@@ -26,8 +27,7 @@ private SeekBar ring,notif,media,sys;
         setContentView(R.layout.add0_activity_layout);
 
         et=(EditText)findViewById(R.id.nameTxt);
-        imb=(FloatingActionButton)findViewById(R.id.next);
-        imb.setEnabled(false);
+        imb=(FloatingActionButton)findViewById(R.id.next); //Next button
         imb.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.disabledColor)));
 
 
@@ -36,15 +36,14 @@ private SeekBar ring,notif,media,sys;
             @Override
             public void onTextChanged(CharSequence s, int start, int before,
                                       int count) {
-                Log.i("Name", s.toString());
+
+                //Disable next button if name is not entered by just changing the color.
                 if (s.toString().equals("")) {
                     imb.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.disabledColor)));
-                    imb.setEnabled(false);
-                    //imb.setVisibility(View.INVISIBLE);
+
                 } else {
                     imb.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimaryDark)));
-                    imb.setEnabled(true);
-                    //imb.setVisibility(View.VISIBLE);
+
                 }
             }
 
@@ -75,7 +74,15 @@ private SeekBar ring,notif,media,sys;
         }
     }
     public void add1_method(View v){
-        Intent myIntent=new Intent(this,add1_activity.class);
-        startActivity(myIntent);
+
+        EditText nameTxt = (EditText) findViewById(R.id.nameTxt);
+
+        //Display toast if name is not entered
+        if
+                (nameTxt.getText().length()<=0) Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
+        else{
+            Intent myIntent=new Intent(this,add1_activity.class);
+            startActivity(myIntent);
+        }
     }
 }
