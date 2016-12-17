@@ -62,10 +62,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
             android:progress="20"
             android:progressTint="@color/colorPrimary"
-            android:thumbTint="@color/colorPrimary"
+            android:thumb="@drawable/ic_ringtone"
+            android:thumbOffset="8dp"
             />
+        <!--android:thumbTint="@color/colorPrimary"-->
 
     </RelativeLayout>
 
@@ -104,9 +107,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
             android:progress="20"
             android:progressTint="@color/colorPrimary"
-            android:thumbTint="@color/colorPrimary"/>
+            android:thumb="@drawable/ic_media"
+            android:thumbOffset="8dp"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -144,9 +149,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
             android:progress="20"
             android:progressTint="@color/colorPrimary"
-            android:thumbTint="@color/colorPrimary"/>
+            android:thumb="@drawable/ic_notifications"
+            android:thumbOffset="8dp"/>
 
     </RelativeLayout>
 
@@ -185,9 +192,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
             android:progress="20"
             android:progressTint="@color/colorPrimary"
-            android:thumbTint="@color/colorPrimary"/>
+            android:thumb="@drawable/ic_system"
+            android:thumbOffset="8dp"/>
 
     </RelativeLayout>
 
