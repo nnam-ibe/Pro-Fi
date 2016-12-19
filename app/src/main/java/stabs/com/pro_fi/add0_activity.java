@@ -75,14 +75,25 @@ private SeekBar ring,notif,media,sys;
     }
     public void add1_method(View v){
 
+        //Collect all of profile info and settings
         EditText nameTxt = (EditText) findViewById(R.id.nameTxt);
+        SeekBar ringtone_seekbar = (SeekBar) findViewById(R.id.ringtone_seekbar);
+        SeekBar media_seekbar = (SeekBar) findViewById(R.id.media_seekbar);
+        SeekBar notifications_seekbar = (SeekBar) findViewById(R.id.notifications_seekbar);
+        SeekBar system_seekbar = (SeekBar) findViewById(R.id.system_seekbar);
 
         //Display toast if name is not entered
         if
                 (nameTxt.getText().length()<=0) Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
         else{
             Intent myIntent=new Intent(this,add1_activity.class);
+
+            //Pass all info
             myIntent.putExtra("NAME_TXT_VAL", nameTxt.getText().toString());
+            myIntent.putExtra("RINGTONE", ringtone_seekbar.getProgress());
+            myIntent.putExtra("MEDIA", media_seekbar.getProgress());
+            myIntent.putExtra("NOTIFICATIONS", notifications_seekbar.getProgress());
+            myIntent.putExtra("SYSTEM", system_seekbar.getProgress());
             startActivity(myIntent);
         }
     }
