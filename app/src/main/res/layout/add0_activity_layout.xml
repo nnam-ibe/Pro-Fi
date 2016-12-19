@@ -10,11 +10,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".add0_activity"
     android:clipToPadding="false"
-    android:background="@drawable/main_background"
+    android:background="@drawable/main_background_carbonfibre"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true">
 
-
+    <!-- NAME FIELD -->
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="50dp"
@@ -32,9 +32,10 @@
         android:elevation="50dp"
          />
 
+    <!-- SCREEN -->
     <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="450dp"
+        android:layout_width="@dimen/screen_width"
+        android:layout_height="@dimen/screen_height"
         android:fillViewport="false"
         android:layout_below="@+id/nameTxt"
         android:layout_centerHorizontal="true"
@@ -258,10 +259,6 @@
 
     </ScrollView>
 
-
-
-
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/next"
         android:layout_width="wrap_content"
@@ -274,20 +271,4 @@
         android:layout_alignParentBottom="true"
         app:backgroundTint="@color/colorPrimaryDark" />
 
-    <!--
-    <Switch
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:text="Vibration"
-        android:id="@+id/switch1"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
-        android:textSize="21dp"
-        android:textStyle="bold"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/nameTxt"
-        />
-    -->
 </RelativeLayout>
-    <!--android:layout_below="@id/nameTxt"
-               -->

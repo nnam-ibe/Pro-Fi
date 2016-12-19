@@ -82,6 +82,7 @@ private SeekBar ring,notif,media,sys;
                 (nameTxt.getText().length()<=0) Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
         else{
             Intent myIntent=new Intent(this,add1_activity.class);
+            myIntent.putExtra("NAME_TXT_VAL", nameTxt.getText().toString());
             startActivity(myIntent);
         }
     }
