@@ -10,20 +10,18 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".add0_activity"
     android:clipToPadding="false"
-    android:background="@drawable/main_background_carbonfibre"
+    android:background="@drawable/main_background"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true">
 
-    <!-- NAME FIELD -->
-    <EditText
+    <!-- WIFI FIELD -->
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:inputType="textNoSuggestions"
         android:ems="12"
         android:textAlignment="center"
-        android:hint=" Name"
-        android:textColorHint="@color/disabledColor"
-        android:id="@+id/nameTxt2"
+        android:gravity="center"
+        android:id="@+id/wifiTxt"
         android:layout_marginTop="10dp"
         android:textSize="20sp"
         android:layout_centerHorizontal="true"
@@ -37,7 +35,7 @@
         android:layout_width="@dimen/screen_width"
         android:layout_height="@dimen/screen_height"
         android:fillViewport="false"
-        android:layout_below="@+id/nameTxt2"
+        android:layout_below="@+id/wifiTxt"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="10dp"

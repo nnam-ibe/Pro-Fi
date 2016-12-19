@@ -30,9 +30,9 @@ public class add1_activity extends AppCompatActivity {
         setContentView(R.layout.add1_activity_layout);
 
         // SET VALUE OF EDITTEXT TO LAST ENTERED NAME
-        EditText nameTxt2 = (EditText) findViewById(R.id.nameTxt2);
+        TextView wifiTxt = (TextView) findViewById(R.id.wifiTxt);
         String s = getIntent().getStringExtra("NAME_TXT_VAL");
-        nameTxt2.setText(s);
+        //wifiTxt.setText(s);
 
         wifi=(WifiManager) getSystemService(Context.WIFI_SERVICE);
         wifis=wifi.getConfiguredNetworks();
@@ -49,7 +49,7 @@ public class add1_activity extends AppCompatActivity {
             recyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(layoutManager);
-            RecyclerView.Adapter mAdapter = new WifiAdapter((ArrayList<String>) names);
+            RecyclerView.Adapter mAdapter = new WifiAdapter((ArrayList<String>) names, wifiTxt);
             recyclerView.setAdapter(mAdapter);
         }
 

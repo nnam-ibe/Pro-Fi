@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".add0_activity"
     android:clipToPadding="false"
-    android:background="@drawable/main_background_carbonfibre"
+    android:background="@drawable/main_background"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true">
 
