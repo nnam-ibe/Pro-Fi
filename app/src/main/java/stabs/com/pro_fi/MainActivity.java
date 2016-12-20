@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             String receiveString = "";
             receiveString = br.readLine();
             while (receiveString != null ) {
-                int index = receiveString.indexOf('_');
+                int index = receiveString.indexOf("####");
                 receiveString = receiveString.substring(0,index);
                 savedProfiles.add(receiveString);
                 receiveString = br.readLine();

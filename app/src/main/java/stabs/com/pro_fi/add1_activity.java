@@ -37,14 +37,15 @@ public class add1_activity extends AppCompatActivity {
     List<WifiConfiguration> wifis;
     List<String> names=new ArrayList <String>(); // NAMES OF WIFI
     String[] profileInfo = new String[6]; // ALL PROFILE DETAILS AND SETTINGS
+    TextView wifiTxt;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add1_activity_layout);
+        initialise();
 
-        // SET VALUE OF EDITTEXT TO LAST ENTERED NAME
-        TextView wifiTxt = (TextView) findViewById(R.id.wifiTxt);
         //Store info in this order - name, wifi, ringtone, media, notifications, system into profileInfo
         profileInfo[0] = getIntent().getStringExtra("NAME_TXT_VAL");
         profileInfo[2] = getIntent().getStringExtra("RINGTONE");
@@ -57,12 +58,12 @@ public class add1_activity extends AppCompatActivity {
         WifiConfiguration [] array= new WifiConfiguration[wifis.size()];
         wifis.toArray(array);
         names.add("");
+
         for(int i=0;i<wifis.size();i++)
         {
             names.add(array[i].SSID.replace("\"", ""));
         }
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         if (recyclerView != null) {
             recyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -81,9 +82,8 @@ public class add1_activity extends AppCompatActivity {
     }
 
     public void saveProfile(View v){
-        TextView wifi = (TextView) findViewById(R.id.wifiTxt);
 
-        profileInfo[1] = wifi.getText().toString();
+        profileInfo[1] = wifiTxt.getText().toString();
 
         //Write contents profileInfo to DB.
         try{
@@ -93,7 +93,7 @@ public class add1_activity extends AppCompatActivity {
             String profile = "";
 
             for (int i = 0; i < profileInfo.length; ++i){
-                profile += profileInfo[i] + "_";
+                profile += profileInfo[i] + "####";
             }
             bw.write(profile);
             bw.newLine();
@@ -108,5 +108,10 @@ public class add1_activity extends AppCompatActivity {
         Intent myIntent=new Intent(this,MainActivity.class);
         startActivity(myIntent);
 
+    }
+
+    public void initialise(){
+        wifiTxt = (TextView) findViewById(R.id.wifiTxt);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
     }
 }

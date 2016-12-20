@@ -3,9 +3,11 @@ package stabs.com.pro_fi;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -94,6 +96,48 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 .show();
     }
 
+    public void edit_Profile(final View view, final int position){
+        //Get all info of profile refrenced by position and pass it to edit0_activity
+
+        String toEdit = profileNames.get(position);
+
+        //If not Home, Work and School, read from DB
+        if (!toEdit.equals("Home") && !toEdit.equals("Work") && !toEdit.equals("School")){
+
+            //Read from DB
+            try{
+
+                File file = new File(view.getContext().getFilesDir(), "MockDB.txt");
+                FileReader fr = new FileReader(file);
+                BufferedReader br = new BufferedReader(fr);
+                String profileInfo = "";
+
+                while ((profileInfo = br.readLine()) != null){
+                    if (profileInfo.startsWith(toEdit)){
+                        break;
+                    }
+                }
+
+                String[] info = profileInfo.split("####");
+                Intent myIntent = new Intent(view.getContext(), edit0_activity.class);
+                myIntent.putExtra("PROFILE_NAME", info[0]);
+                myIntent.putExtra("PROFILE_WIFI", info[1]);
+                myIntent.putExtra("PROFILE_RINGTONE", info[2]);
+                myIntent.putExtra("PROFILE_MEDIA", info[3]);
+                myIntent.putExtra("PROFILE_NOTIFICATIONS", info[4]);
+                myIntent.putExtra("PROFILE_SYSTEM", info[5]);
+                view.getContext().startActivity(myIntent);
+
+            }catch(FileNotFoundException e){
+                e.printStackTrace();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
 
     @Override
     public int getItemCount() {
@@ -138,6 +182,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                         if (item.getTitle().equals("Delete")) {
                             delete_Diag(v, position);
 
+                        }
+
+                        else if (item.getTitle().equals("Edit")){
+                            edit_Profile(v, position);
                         }
 //                            Toast.makeText(
 //                                    v.getContext(),
