@@ -15,7 +15,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Adapter to manage the recycler view.
@@ -28,13 +36,53 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     {
         profileNames = list;
     }
-    public static void delete_Diag(View view) {
+
+    public void delete_Diag(final View view, final int position) {
         new AlertDialog.Builder(view.getContext())
                 .setTitle("Delete Profile")
                 .setMessage("Are you sure you want to delete this Profile?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+
                         // continue with delete
+                        // delete from screen.
+                        String toRemove = profileNames.get(position);
+                        profileNames.remove(position);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(position, 1);
+
+                        // delete from DB
+                        try{
+
+                            File file = new File(view.getContext().getFilesDir(), "MockDB.txt");
+                            FileReader fr = new FileReader(file);
+                            BufferedReader br = new BufferedReader(fr);
+                            List<String> lines = new ArrayList<String>();
+                            String s = "";
+
+                            // Transfer other data from MockDB.txt to lines
+                            while ((s = br.readLine()) != null){
+                                if (!s.startsWith(toRemove)){
+                                    lines.add(s);
+                                }
+                            }
+
+                            FileWriter fw = new FileWriter(file, false);
+                            BufferedWriter bw = new BufferedWriter(fw);
+
+                            for (String profile: lines
+                                 ) {
+                                bw.write(profile);
+                                bw.newLine();
+                            }
+
+                            bw.flush(); bw.close(); fw.close();
+
+                        }catch(FileNotFoundException e){
+                            e.printStackTrace();
+                        }catch(IOException e){
+                            e.printStackTrace();
+                        }
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -46,6 +94,23 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 .show();
     }
 
+
+    @Override
+    public int getItemCount() {
+        return profileNames.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView textView;
+        public Button button1;
+        public ViewHolder(View v) {
+            super(v);
+            textView = (TextView)v.findViewById(R.id.name_text_view);
+             button1 = (Button)v.findViewById(R.id.button);
+
+        }
+    }
+
     @Override
     public ProfileAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
@@ -54,49 +119,39 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ProfileAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final ProfileAdapter.ViewHolder holder, final int position) {
         String profileName = profileNames.get(position);
         holder.textView.setText(profileName);
-    }
 
-    @Override
-    public int getItemCount() {
-        return profileNames.size();
-    }
+        holder.button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                //Creating the instance of PopupMenu
+                PopupMenu popup = new PopupMenu(v.getContext(), holder.button1);
+                //Inflating the Popup using xml file
+                popup.getMenuInflater()
+                        .inflate(R.menu.popup_menu, popup.getMenu());
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView textView;
-        public ViewHolder(View v) {
-            super(v);
-            textView = (TextView)v.findViewById(R.id.name_text_view);
-            final Button button1 = (Button)v.findViewById(R.id.button);
-            button1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    //Creating the instance of PopupMenu
-                    PopupMenu popup = new PopupMenu(v.getContext(), button1);
-                    //Inflating the Popup using xml file
-                    popup.getMenuInflater()
-                            .inflate(R.menu.popup_menu, popup.getMenu());
+                //registering popup with OnMenuItemClickListener
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (item.getTitle().equals("Delete")) {
+                            delete_Diag(v, position);
 
-                    //registering popup with OnMenuItemClickListener
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(MenuItem item) {
-                            if(item.getTitle().equals("Delete")){delete_Diag(v);}
+                        }
 //                            Toast.makeText(
 //                                    v.getContext(),
 //                                    "You Clicked : " + item.getTitle(),
 //                                    Toast.LENGTH_SHORT
 //                            ).show();
-                            return true;
-                        }
-                    });
-                    popup.setGravity(Gravity.RIGHT);
-
-                    popup.show(); //showing popup menu
-                }
+                        return true;
+                    }
                 });
-        }
+                popup.setGravity(Gravity.RIGHT);
+
+                popup.show(); //showing popup menu
+            }
+        });
     }
 
 }
