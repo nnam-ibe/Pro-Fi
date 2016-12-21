@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -19,7 +20,15 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,6 +49,38 @@ public class MainActivity extends AppCompatActivity {
         list.add("Home");
         list.add("Work");
         list.add("School");
+
+        //Pull saved profiles from DB.
+        List<String> savedProfiles = new ArrayList<>();
+        String ret = "";
+        try {
+            File file = new File(getFilesDir(), "MockDB.txt");
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String receiveString = "";
+            receiveString = br.readLine();
+            while (receiveString != null ) {
+                int index = receiveString.indexOf("####");
+                receiveString = receiveString.substring(0,index);
+                savedProfiles.add(receiveString);
+                receiveString = br.readLine();
+            }
+
+            br.close(); fr.close();
+        }
+        catch (FileNotFoundException e) {
+           e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.i("SAVED_PROFILES", savedProfiles.size()+"");
+
+        //Add profiles to list
+        for (String profile : savedProfiles) {
+            list.add(profile);
+        }
+
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         if (recyclerView != null) {
             recyclerView.setHasFixedSize(true);

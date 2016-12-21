@@ -16,7 +16,7 @@ import android.widget.SeekBar;
 import android.graphics.Color;
 import android.widget.Toast;
 
-public class add0_activity extends AppCompatActivity {
+public class edit0_activity extends AppCompatActivity {
 
     private SeekBar ring,notif,media,sys;
     float scale=1.4f;
@@ -26,10 +26,27 @@ public class add0_activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add0_activity_layout);
+        setContentView(R.layout.edit0_activity_layout);
         initialise();
 
-        //Add listener to et
+        //Show all profile Settings
+
+        //Show profile name
+        et.setText(getIntent().getStringExtra("PROFILE_NAME"));
+
+        //Show ringtone setting
+        ring.setProgress(Integer.valueOf(getIntent().getStringExtra("PROFILE_RINGTONE")));
+
+        //Show media setting
+        media.setProgress(Integer.valueOf(getIntent().getStringExtra("PROFILE_MEDIA")));
+
+        //Show notifications setting
+        notif.setProgress(Integer.valueOf(getIntent().getStringExtra("PROFILE_NOTIFICATIONS")));
+
+        //Show system setting
+        sys.setProgress(Integer.valueOf(getIntent().getStringExtra("PROFILE_SYSTEM")));
+
+
         et.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -60,29 +77,6 @@ public class add0_activity extends AppCompatActivity {
             }
         });
 
-        //Add listeners to seekbars
-        ring.setOnSeekBarChangeListener(new SeekListener(ring));
-        media.setOnSeekBarChangeListener(new SeekListener(media));
-        notif.setOnSeekBarChangeListener(new SeekListener(notif));
-        sys.setOnSeekBarChangeListener(new SeekListener(sys));
-    }
-
-    public void add1_method(View v){
-
-        //Display toast if name is not entered
-        if
-                (et.getText().length()<=0) Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
-        else{
-            Intent myIntent=new Intent(this,add1_activity.class);
-
-            //Pass all info
-            myIntent.putExtra("NAME_TXT_VAL", et.getText().toString());
-            myIntent.putExtra("RINGTONE", Integer.toString(ring.getProgress()));
-            myIntent.putExtra("MEDIA", Integer.toString(media.getProgress()));
-            myIntent.putExtra("NOTIFICATIONS", Integer.toString(notif.getProgress()));
-            myIntent.putExtra("SYSTEM", Integer.toString(sys.getProgress()));
-            startActivity(myIntent);
-        }
     }
 
     // Method for initializing variables
@@ -90,7 +84,6 @@ public class add0_activity extends AppCompatActivity {
 
         et=(EditText)findViewById(R.id.nameTxt);
         imb=(FloatingActionButton)findViewById(R.id.next); //Next button
-        imb.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.disabledColor)));
         ring = (SeekBar) findViewById(R.id.ringtone_seekbar);
         notif = (SeekBar) findViewById(R.id.notifications_seekbar);
         media = (SeekBar) findViewById(R.id.media_seekbar);
@@ -103,25 +96,21 @@ public class add0_activity extends AppCompatActivity {
 
     }
 
-    // Listener class for seekbars
-    class SeekListener implements SeekBar.OnSeekBarChangeListener{
+    public void add1_method(View v){
 
-        SeekBar s;
+        //Display toast if name is not entered
+        if
+                (et.getText().length()<=0) Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
+        else{
+            Intent myIntent=new Intent(this,add1_activity.class);
 
-        public SeekListener(SeekBar seekBar){
-            s = seekBar;
+            //Pass all info
+            myIntent.putExtra("NAME_TXT_VAL", et.getText().toString());
+            myIntent.putExtra("RINGTONE", ring.getProgress());
+            myIntent.putExtra("MEDIA", media.getProgress());
+            myIntent.putExtra("NOTIFICATIONS", notif.getProgress());
+            myIntent.putExtra("SYSTEM", sys.getProgress());
+            startActivity(myIntent);
         }
-
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int val, boolean fromUser){
-            s.setProgress(val);
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar){}
-
-        @Override
-        public  void onStopTrackingTouch(SeekBar seekBar){}
-
     }
 }
