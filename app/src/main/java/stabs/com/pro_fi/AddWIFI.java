@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class add1_activity extends AppCompatActivity {
+public class AddWIFI extends AppCompatActivity {
 
     WifiManager wifi;
     List<WifiConfiguration> wifis;
@@ -57,7 +57,7 @@ public class add1_activity extends AppCompatActivity {
         wifis=wifi.getConfiguredNetworks();
         WifiConfiguration [] array= new WifiConfiguration[wifis.size()];
         wifis.toArray(array);
-        names.add("");
+        names.add("None");// Empty spot
 
         for(int i=0;i<wifis.size();i++)
         {

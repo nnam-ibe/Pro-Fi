@@ -16,7 +16,7 @@ import android.widget.SeekBar;
 import android.graphics.Color;
 import android.widget.Toast;
 
-public class add0_activity extends AppCompatActivity {
+public class CreateProfile extends AppCompatActivity {
 
     private SeekBar ring,notif,media,sys;
     float scale=1.4f;
