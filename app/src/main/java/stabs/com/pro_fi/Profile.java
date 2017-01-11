@@ -10,6 +10,7 @@ public class Profile {
 
     private int id;
     private String name;
+    private String wifi;
     private int ringtone;
     private int media;
     private int notification;
@@ -23,8 +24,9 @@ public class Profile {
      * @param notification the integer value of the notification volume
      * @param system the integer value of the system volume
      */
-    public Profile(String name, int ringtone, int media, int notification, int system) {
+    public Profile(String name,String wifi, int ringtone, int media, int notification, int system) {
         this.name = name;
+        this.wifi=wifi;
         this.ringtone = ringtone;
         this.media = media;
         this.notification = notification;
@@ -40,8 +42,8 @@ public class Profile {
      * @param notification the integer value of the notification volume
      * @param system the integer value of the system volume
      */
-    public Profile(int id, String name, int ringtone, int media, int notification, int system) {
-        this(name, ringtone, media, notification, system);
+    public Profile(int id, String name, String wifi, int ringtone, int media, int notification, int system) {
+        this(name, wifi, ringtone, media, notification, system);
         this.id = id;
     }
 
@@ -91,5 +93,13 @@ public class Profile {
 
     public void setSystem(int system) {
         this.system = system;
+    }
+
+    public String getWifi() {
+        return wifi;
+    }
+
+    public void setWifi(String wifi) {
+        this.wifi = wifi;
     }
 }

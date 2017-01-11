@@ -7,13 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.SeekBar;
-import android.graphics.Color;
 import android.widget.Toast;
 
 public class CreateProfile extends AppCompatActivity {
@@ -68,12 +64,21 @@ public class CreateProfile extends AppCompatActivity {
     }
 
     public void add1_method(View v){
+        DBHelper helper = DBHelper.getInstance(this);
 
         //Display toast if name is not entered
-        if
-                (et.getText().length()<=0) Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
+        if (et.getText().length()<=0)
+        {
+            Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
+        }
+        //String match= SELECT  FROM ;
+       else if(!(helper.isUnique(et.getText().toString())))
+         {
+             Toast.makeText(this, "This Profile Name already Exists", Toast.LENGTH_SHORT).show();
+
+         }
         else{
-            Intent myIntent=new Intent(this,add1_activity.class);
+            Intent myIntent=new Intent(this,AddWifi.class);
 
             //Pass all info
             myIntent.putExtra("NAME_TXT_VAL", et.getText().toString());

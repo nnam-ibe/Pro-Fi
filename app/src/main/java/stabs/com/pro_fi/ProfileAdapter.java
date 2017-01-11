@@ -31,10 +31,10 @@ import java.util.List;
  * Adapter to manage the recycler view.
  */
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
-    ProfileAdapter context=this;
-    public ArrayList<String> profileNames;
+    String TAG ="ProfileAdapter";
+    public ArrayList<Profile> profileNames;
 
-    public ProfileAdapter(ArrayList<String> list)
+    public ProfileAdapter(ArrayList<Profile> list)
     {
         profileNames = list;
     }
@@ -48,43 +48,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 
                         // continue with delete
                         // delete from screen.
-                        String toRemove = profileNames.get(position);
+                        Profile toRemove = profileNames.get(position);
                         profileNames.remove(position);
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position, 1);
 
-                        // delete from DB
-                        try{
-
-                            File file = new File(view.getContext().getFilesDir(), "MockDB.txt");
-                            FileReader fr = new FileReader(file);
-                            BufferedReader br = new BufferedReader(fr);
-                            List<String> lines = new ArrayList<String>();
-                            String s = "";
-
-                            // Transfer other data from MockDB.txt to lines
-                            while ((s = br.readLine()) != null){
-                                if (!s.startsWith(toRemove)){
-                                    lines.add(s);
-                                }
-                            }
-
-                            FileWriter fw = new FileWriter(file, false);
-                            BufferedWriter bw = new BufferedWriter(fw);
-
-                            for (String profile: lines
-                                 ) {
-                                bw.write(profile);
-                                bw.newLine();
-                            }
-
-                            bw.flush(); bw.close(); fw.close();
-
-                        }catch(FileNotFoundException e){
-                            e.printStackTrace();
-                        }catch(IOException e){
-                            e.printStackTrace();
-                        }
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -96,47 +64,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 .show();
     }
 
-    public void edit_Profile(final View view, final int position){
-        //Get all info of profile refrenced by position and pass it to edit0_activity
 
-        String toEdit = profileNames.get(position);
-
-        //If not Home, Work and School, read from DB
-        if (!toEdit.equals("Home") && !toEdit.equals("Work") && !toEdit.equals("School")){
-
-            //Read from DB
-            try{
-
-                File file = new File(view.getContext().getFilesDir(), "MockDB.txt");
-                FileReader fr = new FileReader(file);
-                BufferedReader br = new BufferedReader(fr);
-                String profileInfo = "";
-
-                while ((profileInfo = br.readLine()) != null){
-                    if (profileInfo.startsWith(toEdit)){
-                        break;
-                    }
-                }
-
-                String[] info = profileInfo.split("####");
-                Intent myIntent = new Intent(view.getContext(), edit0_activity.class);
-                myIntent.putExtra("PROFILE_NAME", info[0]);
-                myIntent.putExtra("PROFILE_WIFI", info[1]);
-                myIntent.putExtra("PROFILE_RINGTONE", info[2]);
-                myIntent.putExtra("PROFILE_MEDIA", info[3]);
-                myIntent.putExtra("PROFILE_NOTIFICATIONS", info[4]);
-                myIntent.putExtra("PROFILE_SYSTEM", info[5]);
-                view.getContext().startActivity(myIntent);
-
-            }catch(FileNotFoundException e){
-                e.printStackTrace();
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-
-        }
-
-    }
 
 
     @Override
@@ -147,7 +75,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;
         public Button button1;
-        public ViewHolder(View v) {
+        public ViewHolder(View v)
+        {
             super(v);
             textView = (TextView)v.findViewById(R.id.name_text_view);
              button1 = (Button)v.findViewById(R.id.button);
@@ -164,8 +93,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final ProfileAdapter.ViewHolder holder, final int position) {
-        String profileName = profileNames.get(position);
-        holder.textView.setText(profileName);
+        Profile profileName = profileNames.get(position);
+        Log.e(TAG, "Profile name: " + profileName.getName());
+        Log.e(TAG, "Wifi name: " + profileName.getWifi());
+        holder.textView.setText(profileName.getName());
 
         holder.button1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,12 +111,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getTitle().equals("Delete")) {
-                            delete_Diag(v, position);
+                            delete_Diag(v, position);// TODO Delete from DB.
 
                         }
 
                         else if (item.getTitle().equals("Edit")){
-                            edit_Profile(v, position);
+                            //edit_Profile(v, position);
                         }
 //                            Toast.makeText(
 //                                    v.getContext(),

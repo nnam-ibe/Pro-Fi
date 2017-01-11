@@ -31,14 +31,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AddWIFI extends AppCompatActivity {
-
+public class AddWifi extends AppCompatActivity {
+    final String TAG = "AddWifi";
+    final String NAME="NAME_TXT_VAL";
+    final String Wifi="WIFI";
+    final String RING="RINGTONE";
+    final String MEDIA="MEDIA";
+    final String NOTIF="NOTIFICATIONS";
+    final String SYS="SYSTEM";
     WifiManager wifi;
     List<WifiConfiguration> wifis;
     List<String> names=new ArrayList <String>(); // NAMES OF WIFI
     String[] profileInfo = new String[6]; // ALL PROFILE DETAILS AND SETTINGS
     TextView wifiTxt;
     RecyclerView recyclerView;
+    Profile profile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +54,11 @@ public class AddWIFI extends AppCompatActivity {
         initialise();
 
         //Store info in this order - name, wifi, ringtone, media, notifications, system into profileInfo
-        profileInfo[0] = getIntent().getStringExtra("NAME_TXT_VAL");
-        profileInfo[2] = getIntent().getStringExtra("RINGTONE");
-        profileInfo[3] = getIntent().getStringExtra("MEDIA");
-        profileInfo[4] = getIntent().getStringExtra("NOTIFICATIONS");
-        profileInfo[5] = getIntent().getStringExtra("SYSTEM");
+        profileInfo[0] = getIntent().getStringExtra(NAME);
+        profileInfo[2] = getIntent().getStringExtra(RING);
+        profileInfo[3] = getIntent().getStringExtra(MEDIA);
+        profileInfo[4] = getIntent().getStringExtra(NOTIF);
+        profileInfo[5] = getIntent().getStringExtra(SYS);
 
         wifi=(WifiManager) getSystemService(Context.WIFI_SERVICE);
         wifis=wifi.getConfiguredNetworks();
@@ -84,25 +91,21 @@ public class AddWIFI extends AppCompatActivity {
     public void saveProfile(View v){
 
         profileInfo[1] = wifiTxt.getText().toString();
+        profile = new Profile(
+                profileInfo[0],
+                profileInfo[1],
+                Integer.parseInt(profileInfo[2]),
+                Integer.parseInt(profileInfo[3]),
+                Integer.parseInt(profileInfo[4]),
+                Integer.parseInt(profileInfo[5])
+         );
 
+        DBHelper helper= DBHelper.getInstance(this);
+        helper.insertProfile(profile);
+        Log.e(TAG, "Profile name: " + profile.getName());
+        Log.e(TAG, "Wifi name: " + profile.getWifi());
         //Write contents profileInfo to DB.
-        try{
-            File file = new File(getFilesDir(), "MockDB.txt");
-            FileWriter fw = new FileWriter(file, true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            String profile = "";
 
-            for (int i = 0; i < profileInfo.length; ++i){
-                profile += profileInfo[i] + "####";
-            }
-            bw.write(profile);
-            bw.newLine();
-            bw.flush();
-            bw.close(); fw.close();
-
-        }catch (IOException e){
-            e.printStackTrace();
-        }
 
         //Switch to Home screen
         Intent myIntent=new Intent(this,MainActivity.class);

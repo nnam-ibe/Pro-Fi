@@ -27,6 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String PROFILE_TABLE = "PROFILE_TABLE";
     public static final String PROFILE_ID = "PROFILE_ID";
     public static final String PROFILE_NAME = "PROFILE_NAME";
+    public static final String WIFI_NAME = "WIFI_NAME";
     public static final String PROFILE_RINGTONE = "PROFILE_RINGTONE";
     public static final String PROFILE_MEDIA = "PROFILE_MEDIA";
     public static final String PROFILE_NOTIFICATIONS = "PROFILE_NOTIFICATIONS";
@@ -35,7 +36,8 @@ public class DBHelper extends SQLiteOpenHelper {
     // Create Statements
     private static final String PROFILE_TABLE_CREATE = "CREATE TABLE " + PROFILE_TABLE + "("
             + PROFILE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-            + PROFILE_NAME + " TEXT PRIMARY KEY, "
+            + PROFILE_NAME + " TEXT, "
+            + WIFI_NAME + " TEXT, "
             + PROFILE_RINGTONE + " INTEGER, "
             + PROFILE_MEDIA + " INTEGER, "
             + PROFILE_NOTIFICATIONS + " INTEGER, "
@@ -67,17 +69,17 @@ public class DBHelper extends SQLiteOpenHelper {
      * Helper method to insert a profile into the db
      * @param profile the profile to be stored in the db
      */
-    public void insertProfile(Profile profile) {
+    public long insertProfile(Profile profile) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(PROFILE_NAME, profile.getName());
+        values.put(WIFI_NAME, profile.getWifi());
         values.put(PROFILE_RINGTONE, profile.getRingtone());
         values.put(PROFILE_MEDIA, profile.getMedia());
         values.put(PROFILE_NOTIFICATIONS, profile.getNotification());
         values.put(PROFILE_SYSTEM, profile.getSystem());
-
-        db.insert(PROFILE_TABLE, null, values);
+        return db.insert(PROFILE_TABLE, null, values);
     }
 
     /**
@@ -91,6 +93,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(PROFILE_NAME, profile.getName());
+        values.put(WIFI_NAME, profile.getWifi());
         values.put(PROFILE_RINGTONE, profile.getRingtone());
         values.put(PROFILE_MEDIA, profile.getMedia());
         values.put(PROFILE_NOTIFICATIONS, profile.getNotification());
@@ -107,6 +110,17 @@ public class DBHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    public boolean isUnique(String name)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query= "SELECT " + PROFILE_NAME +
+                      " FROM " + PROFILE_TABLE +
+                      " WHERE " + PROFILE_NAME+ " = '" + name + "'";
+        Cursor cursor= db.rawQuery(query,null);
+        return cursor.getCount()==0;
+
+    }
+
     /**
      * Helper method to retrieve a profile from the db, based on its id
      * @param profileId the id of the profile to get from the db
@@ -117,7 +131,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         Cursor cursor = db.query(PROFILE_TABLE,
-                new String[]{PROFILE_NAME, PROFILE_RINGTONE, PROFILE_MEDIA, PROFILE_NOTIFICATIONS, PROFILE_SYSTEM},
+                new String[]{PROFILE_NAME, WIFI_NAME, PROFILE_RINGTONE, PROFILE_MEDIA, PROFILE_NOTIFICATIONS, PROFILE_SYSTEM},
                 PROFILE_ID + "=?",
                 new String[]{profileId + ""},
                 null,
@@ -128,6 +142,7 @@ public class DBHelper extends SQLiteOpenHelper {
         if(cursor!=null && cursor.moveToNext()) {
             return new Profile(profileId,
                     cursor.getString(cursor.getColumnIndex(PROFILE_NAME)),
+                    cursor.getString(cursor.getColumnIndex(WIFI_NAME)),
                     cursor.getInt(cursor.getColumnIndex(PROFILE_RINGTONE)),
                     cursor.getInt(cursor.getColumnIndex(PROFILE_MEDIA)),
                     cursor.getInt(cursor.getColumnIndex(PROFILE_NOTIFICATIONS)),
@@ -146,13 +161,14 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<Profile> profiles = new ArrayList<>();
 
         Cursor cursor = db.query(PROFILE_TABLE,
-                new String[]{PROFILE_NAME, PROFILE_RINGTONE, PROFILE_MEDIA, PROFILE_NOTIFICATIONS, PROFILE_SYSTEM},
+                new String[]{PROFILE_ID, PROFILE_NAME, WIFI_NAME, PROFILE_RINGTONE, PROFILE_MEDIA, PROFILE_NOTIFICATIONS, PROFILE_SYSTEM},
                 null, null, null, null, null, null);
 
         while (cursor!=null && cursor.moveToNext()) {
             Profile profile = new Profile(
                     cursor.getInt(cursor.getColumnIndex(PROFILE_ID)),
                     cursor.getString(cursor.getColumnIndex(PROFILE_NAME)),
+                    cursor.getString(cursor.getColumnIndex(WIFI_NAME)),
                     cursor.getInt(cursor.getColumnIndex(PROFILE_RINGTONE)),
                     cursor.getInt(cursor.getColumnIndex(PROFILE_MEDIA)),
                     cursor.getInt(cursor.getColumnIndex(PROFILE_NOTIFICATIONS)),
