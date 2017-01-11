@@ -98,7 +98,7 @@ public class edit0_activity extends AppCompatActivity {
         if
                 (et.getText().length()<=0) Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
         else{
-            Intent myIntent=new Intent(this,AddWifi.class);
+            Intent myIntent=new Intent(this,AddWiFi.class);
 
             //Pass all info
             myIntent.putExtra("NAME_TXT_VAL", et.getText().toString());

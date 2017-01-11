@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AddWifi extends AppCompatActivity {
+public class AddWiFi extends AppCompatActivity {
     final String TAG = "AddWifi";
     final String NAME="NAME_TXT_VAL";
     final String Wifi="WIFI";

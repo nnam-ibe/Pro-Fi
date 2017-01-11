@@ -78,7 +78,7 @@ public class CreateProfile extends AppCompatActivity {
 
          }
         else{
-            Intent myIntent=new Intent(this,AddWifi.class);
+            Intent myIntent=new Intent(this,AddWiFi.class);
 
             //Pass all info
             myIntent.putExtra("NAME_TXT_VAL", et.getText().toString());
