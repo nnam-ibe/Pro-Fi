@@ -31,14 +31,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AddWiFi extends AppCompatActivity {
-    final String TAG = "AddWifi";
-    final String NAME="NAME_TXT_VAL";
-    final String Wifi="WIFI";
-    final String RING="RINGTONE";
-    final String MEDIA="MEDIA";
-    final String NOTIF="NOTIFICATIONS";
-    final String SYS="SYSTEM";
+public class AddWIFI extends AppCompatActivity {
+
+    public static final String TAG = "AddWifi";
+    public static final String NAME="NAME_TXT_VAL";
+    public static final String WIFI="WIFI";
+    public static final String RING="RINGTONE";
+    public static final String MEDIA="MEDIA";
+    public static final String NOTIF="NOTIFICATIONS";
+    public static final String SYS="SYSTEM";
+
     WifiManager wifi;
     List<WifiConfiguration> wifis;
     List<String> names=new ArrayList <String>(); // NAMES OF WIFI

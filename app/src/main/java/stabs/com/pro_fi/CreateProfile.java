@@ -78,14 +78,14 @@ public class CreateProfile extends AppCompatActivity {
 
          }
         else{
-            Intent myIntent=new Intent(this,AddWiFi.class);
+            Intent myIntent=new Intent(this,AddWIFI.class);
 
             //Pass all info
-            myIntent.putExtra("NAME_TXT_VAL", et.getText().toString());
-            myIntent.putExtra("RINGTONE", Integer.toString(ring.getProgress()));
-            myIntent.putExtra("MEDIA", Integer.toString(media.getProgress()));
-            myIntent.putExtra("NOTIFICATIONS", Integer.toString(notif.getProgress()));
-            myIntent.putExtra("SYSTEM", Integer.toString(sys.getProgress()));
+            myIntent.putExtra(AddWIFI.NAME, et.getText().toString());
+            myIntent.putExtra(AddWIFI.RING, Integer.toString(ring.getProgress()));
+            myIntent.putExtra(AddWIFI.MEDIA, Integer.toString(media.getProgress()));
+            myIntent.putExtra(AddWIFI.NOTIF, Integer.toString(notif.getProgress()));
+            myIntent.putExtra(AddWIFI.SYS, Integer.toString(sys.getProgress()));
             startActivity(myIntent);
         }
     }
