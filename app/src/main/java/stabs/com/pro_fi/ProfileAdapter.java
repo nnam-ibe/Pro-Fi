@@ -33,7 +33,6 @@ import java.util.List;
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
     String TAG ="ProfileAdapter";
     public ArrayList<Profile> profileNames;
-
     public ProfileAdapter(ArrayList<Profile> list)
     {
         profileNames = list;
@@ -45,13 +44,16 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 .setMessage("Are you sure you want to delete this Profile?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-
+                        //delete From database
+                        DBHelper helper= DBHelper.getInstance(view.getContext());
+                        helper.deleteProfile(profileNames.get(position));
                         // continue with delete
                         // delete from screen.
                         Profile toRemove = profileNames.get(position);
                         profileNames.remove(position);
                         notifyItemRemoved(position);
-                        notifyItemRangeChanged(position, 1);
+                        notifyItemRangeChanged(position, 1); // update position
+
 
                     }
                 })
