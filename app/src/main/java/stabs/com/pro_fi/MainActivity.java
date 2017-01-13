@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         this.toast.show();
     }
     private void killToast() {
-        if (this.toast != null) {
+        if (this.toast!= null) {
             this.toast.cancel();
         }
     }

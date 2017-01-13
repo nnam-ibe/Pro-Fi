@@ -33,9 +33,10 @@
         <RelativeLayout
             android:id="@+id/body_layout"
             android:layout_width="wrap_content"
-            android:layout_height="450dp"
+            android:layout_height="410dp"
             android:layout_below="@+id/nameTxt"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            android:layout_alignParentEnd="true">
 
             <RelativeLayout
                 android:id="@+id/ringtone_layout"
@@ -43,7 +44,6 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:paddingTop="0dp"
@@ -99,7 +99,6 @@
                 android:layout_below="@+id/ringtone_layout"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:clipToPadding="false">
@@ -148,7 +147,6 @@
                 android:layout_below="@+id/media_layout"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:clipToPadding="false">
@@ -198,7 +196,6 @@
                 android:layout_below="@+id/notifications_layout"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:clipToPadding="false"
