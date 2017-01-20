@@ -15,4 +15,5 @@
     <string name="prof_Name">Name:</string>
     <string name="title_activity_add_">add_Activity</string>
     <string name="title_activity_add1_activity">add1</string>
+    <string name="profile_name">Name</string>
 </resources>
