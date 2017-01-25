@@ -15,6 +15,7 @@ import android.widget.Toast;
 public class CreateProfile extends AppCompatActivity {
 
     private SeekBar ring,notif,media,sys;
+    final int MAX_SEEK=15;
     float scale=1.4f;
     FloatingActionButton imb;
     EditText et;
@@ -57,10 +58,10 @@ public class CreateProfile extends AppCompatActivity {
         });
 
         //Add listeners to seekbars
-        ring.setOnSeekBarChangeListener(new SeekListener(ring));
-        media.setOnSeekBarChangeListener(new SeekListener(media));
-        notif.setOnSeekBarChangeListener(new SeekListener(notif));
-        sys.setOnSeekBarChangeListener(new SeekListener(sys));
+        ring.setOnSeekBarChangeListener(new SeekListener(ring));ring.setMax(MAX_SEEK); ring.setProgress(0);
+        media.setOnSeekBarChangeListener(new SeekListener(media)); media.setMax(MAX_SEEK);media.setProgress(0);
+        notif.setOnSeekBarChangeListener(new SeekListener(notif));notif.setMax(MAX_SEEK);notif.setProgress(0);
+        sys.setOnSeekBarChangeListener(new SeekListener(sys));sys.setMax(MAX_SEEK);sys.setProgress(0);
     }
 
     public void add1_method(View v){

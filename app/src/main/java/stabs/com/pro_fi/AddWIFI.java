@@ -28,6 +28,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,6 +46,7 @@ public class AddWIFI extends AppCompatActivity {
     WifiManager wifi;
     List<WifiConfiguration> wifis;
     List<String> names=new ArrayList <String>(); // NAMES OF WIFI
+    List<String> scannedNetworks=new ArrayList<String>(); //
     String[] profileInfo = new String[6]; // ALL PROFILE DETAILS AND SETTINGS
     TextView wifiTxt;
     RecyclerView recyclerView;
@@ -68,10 +71,16 @@ public class AddWIFI extends AppCompatActivity {
         wifis.toArray(array);
         names.add("None");// Empty spot
 
+        // Get List of ScanResults
+       // List<ScanResult> wifiList = wifi.getScanResults();
+        //names.add("Size "+wifiList.size());
+
         for(int i=0;i<wifis.size();i++)
         {
             names.add(array[i].SSID.replace("\"", ""));
         }
+        Collections.sort(names);
+        //TODO Move Strongest Connections to the top
 
         if (recyclerView != null) {
             recyclerView.setHasFixedSize(true);
@@ -104,8 +113,10 @@ public class AddWIFI extends AppCompatActivity {
 
         DBHelper helper= DBHelper.getInstance(this);
         helper.insertProfile(profile);
-        Log.e(TAG, "Profile name: " + profile.getName());
-        Log.e(TAG, "Wifi name: " + profile.getWifi());
+        Log.e(TAG, "Wifi name: " + profile.getRingtone());
+        Log.e(TAG, "Profile name: " + profile.getMedia());
+        Log.e(TAG, "Profile name: " + profile.getNotification());
+        Log.e(TAG, "Wifi name: " + profile.getSystem());
         //Write contents profileInfo to DB.
 
 
