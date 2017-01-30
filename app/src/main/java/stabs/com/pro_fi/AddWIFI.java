@@ -3,6 +3,8 @@ package stabs.com.pro_fi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -19,6 +21,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -80,7 +83,6 @@ public class AddWIFI extends AppCompatActivity {
             names.add(array[i].SSID.replace("\"", ""));
         }
         Collections.sort(names);
-        //TODO Move Strongest Connections to the top
 
         if (recyclerView != null) {
             recyclerView.setHasFixedSize(true);
@@ -100,8 +102,16 @@ public class AddWIFI extends AppCompatActivity {
     }
 
     public void saveProfile(View v){
-
         profileInfo[1] = wifiTxt.getText().toString();
+        DBHelper helper= DBHelper.getInstance(this);
+
+        if(!(helper.isUniqueWIFI(profileInfo[1])))
+        {
+            Toast.makeText(this, "WiFi name taken", Toast.LENGTH_SHORT).show();
+
+        }
+        else
+        {
         profile = new Profile(
                 profileInfo[0],
                 profileInfo[1],
@@ -111,12 +121,7 @@ public class AddWIFI extends AppCompatActivity {
                 Integer.parseInt(profileInfo[5])
          );
 
-        DBHelper helper= DBHelper.getInstance(this);
         helper.insertProfile(profile);
-        Log.e(TAG, "Wifi name: " + profile.getRingtone());
-        Log.e(TAG, "Profile name: " + profile.getMedia());
-        Log.e(TAG, "Profile name: " + profile.getNotification());
-        Log.e(TAG, "Wifi name: " + profile.getSystem());
         //Write contents profileInfo to DB.
 
 
@@ -124,7 +129,7 @@ public class AddWIFI extends AppCompatActivity {
         Intent myIntent=new Intent(this,MainActivity.class);
         startActivity(myIntent);
 
-    }
+    }}
 
     public void initialise(){
         wifiTxt = (TextView) findViewById(R.id.wifiTxt);

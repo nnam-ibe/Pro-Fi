@@ -2,6 +2,7 @@ package stabs.com.pro_fi;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
         SwitchCompat mainswitch = (SwitchCompat) findViewById(R.id.compatSwitch);
         ArrayList<Profile> list = DBHelper.getInstance(this).getAllProfiles();
 
-        //
-
 
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -60,25 +59,41 @@ public class MainActivity extends AppCompatActivity {
             RecyclerView.Adapter mAdapter = new ProfileAdapter(list);
             recyclerView.setAdapter(mAdapter);
         }
-
+        SharedPreferences sharedPrefs = getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
+        boolean check=sharedPrefs.getBoolean("AutomaticSelect", false);
+        mainswitch.setChecked(check);
+        if (check) {
+            // The toggle is enabled
+            switchstatus.setText("Mode:    Automatic");
+        } else {
+            switchstatus.setText("Mode:    Manual");
+            // The toggle is disabled
+        }
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        mainswitch.setChecked(false);
-        switchstatus.setText("Mode:    Manual");
         mainswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     // The toggle is enabled
                     switchstatus.setText("Mode:    Automatic");
+
+                    SharedPreferences.Editor editor = getSharedPreferences("com.profi.xyz", MODE_PRIVATE).edit();
+                    editor.putBoolean("AutomaticSelect", true);
+                    editor.commit();
                 } else {
                     switchstatus.setText("Mode:    Manual");
+                    SharedPreferences.Editor editor = getSharedPreferences("com.profi.xyz", MODE_PRIVATE).edit();
+                    editor.putBoolean("AutomaticSelect", false);
+                    editor.commit();
 
                     // The toggle is disabled
                 }
             }
         });
+
+
     }
 
 

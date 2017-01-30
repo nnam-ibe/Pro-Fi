@@ -129,6 +129,16 @@ public class DBHelper extends SQLiteOpenHelper {
         return cursor.getCount()==0;
 
     }
+    public boolean isUniqueWIFI(String name)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query= "SELECT " + WIFI_NAME +
+                " FROM " + PROFILE_TABLE +
+                " WHERE " + WIFI_NAME+ " = '" + name + "'";
+        Cursor cursor= db.rawQuery(query,null);
+        return cursor.getCount()==0;
+
+    }
 
     /**
      * Helper method to retrieve a profile from the db, based on its id

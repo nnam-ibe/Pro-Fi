@@ -3,7 +3,12 @@
     package="stabs.com.pro_fi">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <receiver android:name="com.df.src.NetworkChangeReceiver" >
+        <intent-filter>
+            <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+        </intent-filter>
+    </receiver>
 
     <application
         android:allowBackup="true"

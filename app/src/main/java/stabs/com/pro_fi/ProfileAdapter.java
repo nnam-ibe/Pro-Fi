@@ -120,8 +120,18 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         v.setAlpha((float) 1);
         fade[pos]=false;
     }
-    public void activateProfile(View v,int RING, int MEDIA, int NOTIF, int SYS, boolean Vib)
+    public Profile getProfile(){return null;}
+    public void activateProfile(View v,Profile profile, boolean Vib)
     {
+        // Boolean Vib is for vibration
+        //TODO implement option for vibrate and silent
+        int RING =profile.getRingtone();
+        int NOTIF=profile.getNotification();
+        int SYS  =profile.getSystem();
+        int MEDIA=profile.getMedia();
+
+
+
         myAudioManager = (AudioManager)v.getContext().getSystemService(Context.AUDIO_SERVICE);
        // myAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
         myAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, MEDIA, 0);
@@ -133,8 +143,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 
         Log.e(TAG, "VALUES " + MEDIA +" "+ RING +" "+ NOTIF+" " + SYS);
 
-
-        //Log.e(TAG, "Profile name: " + profile.getMedia());
 
 
     }
@@ -151,11 +159,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         holder.v.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                activateProfile(v,
-                        profileName.getRingtone(),
-                        profileName.getMedia(),
-                        profileName.getNotification(),
-                        profileName.getSystem(),true);
+                activateProfile(v,profileName,true);
                 Toast.makeText(v.getContext(), profileName.getName() + " Activated", Toast.LENGTH_SHORT).show();
                 return true;
             }
