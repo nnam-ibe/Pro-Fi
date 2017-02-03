@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private GoogleApiClient client;
     public static final String TAG="MainActivity";
     AudioManager myAudioManager;
+    private String oldWifi="";
     private boolean check;
     ArrayList<Profile> list;
     private Switch myswitch;
@@ -83,9 +84,10 @@ public class MainActivity extends AppCompatActivity {
         mainswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    //autoActivate();
+
                     // The toggle is enabled
                     switchstatus.setText("Mode:    Automatic");
-                    autoActivate();
                     SharedPreferences.Editor editor = getSharedPreferences("com.profi.xyz", MODE_PRIVATE).edit();
                     editor.putBoolean("AutomaticSelect", true);
                     editor.commit();
@@ -113,31 +115,29 @@ public class MainActivity extends AppCompatActivity {
         }
         return null;
     }
+
     public void autoActivate()
     {
-        NetworkChangeReceiver ncr = new NetworkChangeReceiver();
+        NetworkChangeReceiver ncr =  NetworkChangeReceiver.getInstance();
         ncr.onReceive(this,new Intent());
         SharedPreferences sharedPrefs = getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
-       // if (check && ncr.isConnected()) {
-            if (check) {
-            Profile profile=getProfile(ncr.wifiName);
-            activateProfile(profile,true);
-            String message= "nothing";
-            if(profile!=null) message = profile.getName();
-            Log.e(TAG, "FOUND "+message);
-            Toast.makeText(this, message + " Activated", Toast.LENGTH_SHORT).show();
-
-
-            //TODO  Autoactivate profoile: view psuedocode below
-            //if wifi on{
-            // if connected ssid in db{ ----- activate profile( givens)}
-            // }
-            //else{ tell user to please turn on wifi/gain access to turn wifi on}
-
-            //}
-            //}
-
-        }
+        //if (check && ncr.isWifiConnected) {
+            if (ncr.isConnected()&& check) // if the wifi is connected
+            {
+            Profile profile=getProfile(ncr.wifiName); // get the profile
+                if(profile!=null)
+                {
+                    if(!(profile.getName().equals(oldWifi)))
+                    {
+                    activateProfile(profile,true);
+                    oldWifi=profile.getName(); //
+                    String message= "nothing";
+                    if(profile!=null) message = profile.getName();
+                    Log.e(TAG, "FOUND "+message);
+                    Toast.makeText(this, message + " Activated", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
         else{
         Log.e(TAG, "NOT FOUND ");}
 
@@ -167,7 +167,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
+    @Override
+    public void onResume(){
+        super.onResume();
+        autoActivate();
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
