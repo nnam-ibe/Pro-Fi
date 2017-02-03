@@ -5,7 +5,9 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.net.Network;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +31,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * Adapter to manage the recycler view.
  */
@@ -37,13 +41,14 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     //private Fragment mFragment;
     AudioManager myAudioManager;
     String TAG ="ProfileAdapter";
+    boolean []fade;
     public ArrayList<Profile> profileNames;
+    boolean check;
     public ProfileAdapter(ArrayList<Profile> list)
     {
         profileNames = list;
-    }
-    boolean []fade;
 
+    }
 
     public void delete_Diag(final View view, final int position) {
         new AlertDialog.Builder(view.getContext())
@@ -89,7 +94,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             this.v=v;
             int size=profileNames.size();
             fade= new boolean[size];
-            for(int i=0;i<size;i++){fade[i]=false;}
+           // for(int i=0;i<size;i++){fade[i]=false;}
             textView = (TextView)v.findViewById(R.id.name_text_view);
              button1 = (Button)v.findViewById(R.id.button);
 
@@ -160,6 +165,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             @Override
             public boolean onLongClick(View v) {
                 activateProfile(v,profileName,true);
+                //MainActivity.activateProfile(profileName,true);
                 Toast.makeText(v.getContext(), profileName.getName() + " Activated", Toast.LENGTH_SHORT).show();
                 return true;
             }

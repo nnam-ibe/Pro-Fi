@@ -1,8 +1,10 @@
 package stabs.com.pro_fi;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    public static final String TAG="MainActivity";
+    AudioManager myAudioManager;
+    private boolean check;
+    ArrayList<Profile> list;
     private Switch myswitch;
     private boolean backPressedToExitOnce = false;
     private Toast toast = null;
@@ -47,12 +53,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         final TextView switchstatus=(TextView) findViewById(R.id.switchStatus);
         SwitchCompat mainswitch = (SwitchCompat) findViewById(R.id.compatSwitch);
-        ArrayList<Profile> list = DBHelper.getInstance(this).getAllProfiles();
+        list = DBHelper.getInstance(this).getAllProfiles();
 
 
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        if (recyclerView != null) {
+        if (recyclerView != null)
+        {
             recyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(layoutManager);
@@ -60,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setAdapter(mAdapter);
         }
         SharedPreferences sharedPrefs = getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
-        boolean check=sharedPrefs.getBoolean("AutomaticSelect", false);
+         check=sharedPrefs.getBoolean("AutomaticSelect", false);
         mainswitch.setChecked(check);
         if (check) {
             // The toggle is enabled
@@ -78,10 +85,12 @@ public class MainActivity extends AppCompatActivity {
                 if (isChecked) {
                     // The toggle is enabled
                     switchstatus.setText("Mode:    Automatic");
-
+                    autoActivate();
                     SharedPreferences.Editor editor = getSharedPreferences("com.profi.xyz", MODE_PRIVATE).edit();
                     editor.putBoolean("AutomaticSelect", true);
                     editor.commit();
+
+
                 } else {
                     switchstatus.setText("Mode:    Manual");
                     SharedPreferences.Editor editor = getSharedPreferences("com.profi.xyz", MODE_PRIVATE).edit();
@@ -95,7 +104,69 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+    //return profile containing WIFI Name
+    public Profile getProfile(String WIFINAME)
+    {
+        for(int i=0;i<list.size();i++)
+        {
+            if(list.get(i).getWifi().equals(WIFINAME)) return list.get(i);
+        }
+        return null;
+    }
+    public void autoActivate()
+    {
+        NetworkChangeReceiver ncr = new NetworkChangeReceiver();
+        ncr.onReceive(this,new Intent());
+        SharedPreferences sharedPrefs = getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
+       // if (check && ncr.isConnected()) {
+            if (check) {
+            Profile profile=getProfile(ncr.wifiName);
+            activateProfile(profile,true);
+            String message= "nothing";
+            if(profile!=null) message = profile.getName();
+            Log.e(TAG, "FOUND "+message);
+            Toast.makeText(this, message + " Activated", Toast.LENGTH_SHORT).show();
 
+
+            //TODO  Autoactivate profoile: view psuedocode below
+            //if wifi on{
+            // if connected ssid in db{ ----- activate profile( givens)}
+            // }
+            //else{ tell user to please turn on wifi/gain access to turn wifi on}
+
+            //}
+            //}
+
+        }
+        else{
+        Log.e(TAG, "NOT FOUND ");}
+
+    }
+    public void activateProfile(Profile profile, boolean Vib)
+    {
+        // Boolean Vib is for vibration
+        //TODO implement option for vibrate and silent
+        int RING =profile.getRingtone();
+        int NOTIF=profile.getNotification();
+        int SYS  =profile.getSystem();
+        int MEDIA=profile.getMedia();
+
+
+
+        myAudioManager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
+        // myAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+        myAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, MEDIA, 0);
+        myAudioManager.setStreamVolume(AudioManager.STREAM_RING,RING, 0);
+        myAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION,NOTIF, 0);
+        myAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,SYS, 0);
+
+
+
+       // Log.e(TAG, "VALUES " + MEDIA +" "+ RING +" "+ NOTIF+" " + SYS);
+
+
+
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

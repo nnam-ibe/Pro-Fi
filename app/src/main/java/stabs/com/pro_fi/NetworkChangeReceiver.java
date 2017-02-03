@@ -15,9 +15,17 @@ import android.util.Log;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
 
+
+    private static NetworkChangeReceiver mInstance = null;
     public static boolean isWifiConnected = true;
-    public static final String tag = "NETWORKCHANGERECEIVER";
+    public static final String TAG = "NETWORKCHANGERECEIVER";
     public String wifiName;
+    public static NetworkChangeReceiver getInstance() {
+        if (mInstance == null) {
+            mInstance = new NetworkChangeReceiver();
+        }
+        return mInstance;
+    }
     @Override
     public void onReceive(final Context context, final Intent intent) {
 
@@ -27,13 +35,12 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
             final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
             if (connectionInfo != null && !(connectionInfo.getSSID().equals(""))) {
-                String ssid = connectionInfo.getSSID();
-                wifiName=connectionInfo.getSSID();
+                wifiName=connectionInfo.getSSID().replace("\"", "");
             }
             isWifiConnected = true;
-            Log.i("wifi", "connected");
+           Log.e(TAG, "We are Connected to "+wifiName);
         } else {
-            Log.i("wifi", "not connected");
+            Log.e(TAG, "We are not Connected to "+wifiName);
             isWifiConnected = false;
         }
     }
