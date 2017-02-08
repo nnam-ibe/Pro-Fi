@@ -122,8 +122,10 @@ public class MainActivity extends AppCompatActivity {
         NetworkChangeReceiver ncr =  NetworkChangeReceiver.getInstance();
         ncr.onReceive(this,new Intent());
         SharedPreferences sharedPrefs = getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
+        check=sharedPrefs.getBoolean("AutomaticSelect", false);
+
         //if (check && ncr.isWifiConnected) {
-            if (ncr.isConnected()&git & check) // if the wifi is connected
+            if (ncr.isConnected()&& check) // if the wifi is connected
             {
             Profile profile=getProfile(ncr.wifiName); // get the profile
                 if(profile!=null)
@@ -231,6 +233,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         killToast();
         super.onPause();
+//        pref=PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        editor=pref.edit();
+//        editor.putInt("itempos", pos);
+//        editor.putBoolean("boolvalue", list.isItemChecked(pos));
+//        editor.commit();
+        //  Toast.makeText(getApplicationContext(), "PAUSE", 50).show();
+
     }
     @Override
     public void onStart() {
