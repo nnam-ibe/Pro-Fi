@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         final TextView switchstatus=(TextView) findViewById(R.id.switchStatus);
         SwitchCompat mainswitch = (SwitchCompat) findViewById(R.id.compatSwitch);
         list = DBHelper.getInstance(this).getAllProfiles();
+        check=false;
 
 
 
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         mainswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    //autoActivate();
+                    autoActivate();
 
                     // The toggle is enabled
                     switchstatus.setText("Mode:    Automatic");
@@ -122,20 +123,20 @@ public class MainActivity extends AppCompatActivity {
         ncr.onReceive(this,new Intent());
         SharedPreferences sharedPrefs = getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
         //if (check && ncr.isWifiConnected) {
-            if (ncr.isConnected()&& check) // if the wifi is connected
+            if (ncr.isConnected()&git & check) // if the wifi is connected
             {
             Profile profile=getProfile(ncr.wifiName); // get the profile
                 if(profile!=null)
                 {
-                    if(!(profile.getName().equals(oldWifi)))
-                    {
+//                    if(!(profile.getName().equals(oldWifi)))
+//                    {
                     activateProfile(profile,true);
                     oldWifi=profile.getName(); //
                     String message= "nothing";
-                    if(profile!=null) message = profile.getName();
+                    message = profile.getName();
                     Log.e(TAG, "FOUND "+message);
                     Toast.makeText(this, message + " Activated", Toast.LENGTH_SHORT).show();
-                    }
+                    //}
                 }
             }
         else{
