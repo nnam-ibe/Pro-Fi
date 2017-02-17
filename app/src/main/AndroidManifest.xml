@@ -3,6 +3,13 @@
     package="stabs.com.pro_fi">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <receiver android:name="com.df.src.NetworkChangeReceiver" >
+        <intent-filter>
+            <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+        </intent-filter>
+    </receiver>
 
     <application
         android:allowBackup="true"
@@ -26,7 +33,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".CreateProfile" />
-        <activity android:name=".AddWiFi"></activity>
+        <activity android:name=".AddWIFI"></activity>
         <activity android:name=".edit0_activity"/>
     </application>
 

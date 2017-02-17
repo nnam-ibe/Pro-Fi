@@ -62,13 +62,11 @@ public class edit0_activity extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
                                           int after) {
-                // TODO Auto-generated method stub
 
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                // TODO Auto-generated method stub
 
             }
         });
@@ -98,7 +96,7 @@ public class edit0_activity extends AppCompatActivity {
         if
                 (et.getText().length()<=0) Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
         else{
-            Intent myIntent=new Intent(this,AddWiFi.class);
+            Intent myIntent=new Intent(this,AddWIFI.class);
 
             //Pass all info
             myIntent.putExtra("NAME_TXT_VAL", et.getText().toString());

@@ -109,6 +109,15 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         return result;
     }
+    public void deleteProfile(Profile profile)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(PROFILE_TABLE, PROFILE_ID + " = ?",
+                new String[] { String.valueOf(profile.getId()) });
+        db.close();
+
+    }
 
     public boolean isUnique(String name)
     {
@@ -116,6 +125,16 @@ public class DBHelper extends SQLiteOpenHelper {
         String query= "SELECT " + PROFILE_NAME +
                       " FROM " + PROFILE_TABLE +
                       " WHERE " + PROFILE_NAME+ " = '" + name + "'";
+        Cursor cursor= db.rawQuery(query,null);
+        return cursor.getCount()==0;
+
+    }
+    public boolean isUniqueWIFI(String name)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query= "SELECT " + WIFI_NAME +
+                " FROM " + PROFILE_TABLE +
+                " WHERE " + WIFI_NAME+ " = '" + name + "'";
         Cursor cursor= db.rawQuery(query,null);
         return cursor.getCount()==0;
 

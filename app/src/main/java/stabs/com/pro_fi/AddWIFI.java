@@ -3,6 +3,8 @@ package stabs.com.pro_fi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -19,6 +21,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -28,10 +31,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-public class AddWiFi extends AppCompatActivity {
+public class AddWIFI extends AppCompatActivity {
+
     public static final String TAG = "AddWifi";
     public static final String NAME="NAME_TXT_VAL";
     public static final String WIFI="WIFI";
@@ -43,6 +49,7 @@ public class AddWiFi extends AppCompatActivity {
     WifiManager wifi;
     List<WifiConfiguration> wifis;
     List<String> names=new ArrayList <String>(); // NAMES OF WIFI
+    List<String> scannedNetworks=new ArrayList<String>(); //
     String[] profileInfo = new String[6]; // ALL PROFILE DETAILS AND SETTINGS
     TextView wifiTxt;
     RecyclerView recyclerView;
@@ -67,10 +74,15 @@ public class AddWiFi extends AppCompatActivity {
         wifis.toArray(array);
         names.add("None");// Empty spot
 
+        // Get List of ScanResults
+       // List<ScanResult> wifiList = wifi.getScanResults();
+        //names.add("Size "+wifiList.size());
+
         for(int i=0;i<wifis.size();i++)
         {
             names.add(array[i].SSID.replace("\"", ""));
         }
+        Collections.sort(names);
 
         if (recyclerView != null) {
             recyclerView.setHasFixedSize(true);
@@ -90,8 +102,16 @@ public class AddWiFi extends AppCompatActivity {
     }
 
     public void saveProfile(View v){
-
         profileInfo[1] = wifiTxt.getText().toString();
+        DBHelper helper= DBHelper.getInstance(this);
+
+        if(!(helper.isUniqueWIFI(profileInfo[1])))
+        {
+            Toast.makeText(this, "WiFi name taken", Toast.LENGTH_SHORT).show();
+
+        }
+        else
+        {
         profile = new Profile(
                 profileInfo[0],
                 profileInfo[1],
@@ -101,10 +121,7 @@ public class AddWiFi extends AppCompatActivity {
                 Integer.parseInt(profileInfo[5])
          );
 
-        DBHelper helper= DBHelper.getInstance(this);
         helper.insertProfile(profile);
-        Log.e(TAG, "Profile name: " + profile.getName());
-        Log.e(TAG, "Wifi name: " + profile.getWifi());
         //Write contents profileInfo to DB.
 
 
@@ -112,7 +129,7 @@ public class AddWiFi extends AppCompatActivity {
         Intent myIntent=new Intent(this,MainActivity.class);
         startActivity(myIntent);
 
-    }
+    }}
 
     public void initialise(){
         wifiTxt = (TextView) findViewById(R.id.wifiTxt);
