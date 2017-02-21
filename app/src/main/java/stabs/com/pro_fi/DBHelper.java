@@ -112,7 +112,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public void deleteProfile(Profile profile)
     {
         SQLiteDatabase db = this.getWritableDatabase();
-
         db.delete(PROFILE_TABLE, PROFILE_ID + " = ?",
                 new String[] { String.valueOf(profile.getId()) });
         db.close();

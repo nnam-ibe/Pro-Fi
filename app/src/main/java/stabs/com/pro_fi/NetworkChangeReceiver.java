@@ -26,6 +26,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         }
         return mInstance;
     }
+    public boolean isConnected(){return isWifiConnected;}
     @Override
     public void onReceive(final Context context, final Intent intent) {
 
