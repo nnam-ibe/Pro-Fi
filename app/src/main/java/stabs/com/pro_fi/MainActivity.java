@@ -96,17 +96,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    //return profile containing WIFI Name
-    public Profile getProfile(String WIFINAME)
-    {
-        for(int i=0;i<list.size();i++)
-        {
-            if(list.get(i).getWifi().equals(WIFINAME)) return list.get(i);
-        }
-        return null;
-    }
 
-//    TODO: Done using Receiver
+//    TODO: Now done with DBHelper.getProfile(String), searching better with a db.
+//    //return profile containing WIFI Name
+//    public Profile getProfile(String WIFINAME)
+//    {
+//        for(int i=0;i<list.size();i++)
+//        {
+//            if(list.get(i).getWifi().equals(WIFINAME)) return list.get(i);
+//        }
+//        return null;
+//    }
+
+//    TODO: Now done using Receiver
 //    public void autoActivate()
 //    {
 //        NetworkChangeReceiver ncr =  NetworkChangeReceiver.getInstance();
