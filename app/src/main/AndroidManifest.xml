@@ -34,7 +34,8 @@
 
         <activity android:name=".CreateProfile" />
         <activity android:name=".AddWIFI"></activity>
-        <activity android:name=".edit0_activity"/>
+        <activity android:name=".EditProfileActivity"/>
+        <activity android:name=".EditWIFI"/>
     </application>
 
 </manifest>

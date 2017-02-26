@@ -2,19 +2,22 @@ package stabs.com.pro_fi;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.support.annotation.IntegerRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-public class edit0_activity extends AppCompatActivity {
+public class EditProfileActivity extends AppCompatActivity {
 
     private SeekBar ring,notif,media,sys;
+    final int MAX_SEEK=15;
     float scale=1.4f;
     FloatingActionButton imb;
     EditText et;
@@ -25,8 +28,35 @@ public class edit0_activity extends AppCompatActivity {
         setContentView(R.layout.edit0_activity_layout);
         initialise();
 
-        //Show all profile Settings
+        // Listener class for seekbars
+        class SeekListener implements SeekBar.OnSeekBarChangeListener{
 
+            SeekBar s;
+
+            public SeekListener(SeekBar seekBar){
+                s = seekBar;
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int val, boolean fromUser){
+                s.setProgress(val);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar){}
+
+            @Override
+            public  void onStopTrackingTouch(SeekBar seekBar){}
+
+        }
+
+        //Add listeners to seekbars
+        ring.setOnSeekBarChangeListener(new SeekListener(ring));ring.setMax(MAX_SEEK);
+        media.setOnSeekBarChangeListener(new SeekListener(media)); media.setMax(MAX_SEEK);
+        notif.setOnSeekBarChangeListener(new SeekListener(notif));notif.setMax(MAX_SEEK);
+        sys.setOnSeekBarChangeListener(new SeekListener(sys));sys.setMax(MAX_SEEK);
+
+        //Show all profile Settings
         //Show profile name
         et.setText(getIntent().getStringExtra("PROFILE_NAME"));
 
@@ -41,7 +71,6 @@ public class edit0_activity extends AppCompatActivity {
 
         //Show system setting
         sys.setProgress(Integer.valueOf(getIntent().getStringExtra("PROFILE_SYSTEM")));
-
 
         et.addTextChangedListener(new TextWatcher() {
 
@@ -90,20 +119,21 @@ public class edit0_activity extends AppCompatActivity {
 
     }
 
-    public void add1_method(View v){
+    public void edit1_method(View v){
 
         //Display toast if name is not entered
         if
                 (et.getText().length()<=0) Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
         else{
-            Intent myIntent=new Intent(this,AddWIFI.class);
+            Intent myIntent=new Intent(this,EditWIFI.class);
 
-            //Pass all info
+            //Pass all info to next activity
             myIntent.putExtra("NAME_TXT_VAL", et.getText().toString());
-            myIntent.putExtra("RINGTONE", ring.getProgress());
-            myIntent.putExtra("MEDIA", media.getProgress());
-            myIntent.putExtra("NOTIFICATIONS", notif.getProgress());
-            myIntent.putExtra("SYSTEM", sys.getProgress());
+            myIntent.putExtra("WIFI", getIntent().getStringExtra("PROFILE_WIFI"));
+            myIntent.putExtra("RINGTONE", Integer.toString(ring.getProgress()));
+            myIntent.putExtra("MEDIA", Integer.toString(media.getProgress()));
+            myIntent.putExtra("NOTIFICATIONS", Integer.toString(notif.getProgress()));
+            myIntent.putExtra("SYSTEM", Integer.toString(sys.getProgress()));
             startActivity(myIntent);
         }
     }

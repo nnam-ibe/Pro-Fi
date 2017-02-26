@@ -1,13 +1,9 @@
 package stabs.com.pro_fi;
 
-import android.app.Dialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.AudioManager;
-import android.net.Network;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -21,17 +17,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Adapter to manage the recycler view.
@@ -164,7 +150,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         holder.v.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                activateProfile(v,profileName,true);
+                activateProfile(v, profileName, true);
                 //MainActivity.activateProfile(profileName,true);
                 Toast.makeText(v.getContext(), profileName.getName() + " Activated", Toast.LENGTH_SHORT).show();
                 return true;
@@ -185,10 +171,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                         if (item.getTitle().equals("Delete")) {
                             delete_Diag(v, position);
 
-                        }
-
-                        else if (item.getTitle().equals("Edit")){
-                            //edit_Profile(v, position);
+                        } else if (item.getTitle().equals("Edit")) {
+                            edit_Profile(v, position);
                         }
 //                            Toast.makeText(
 //                                    v.getContext(),
@@ -203,6 +187,22 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 popup.show(); //showing popup menu
             }
         });
+    }
+
+    //Switch to edit view
+    public void edit_Profile(final View view, final int position){
+        Intent myIntent = new Intent(view.getContext(), EditProfileActivity.class);
+        DBHelper helper = DBHelper.getInstance(view.getContext());
+        Profile selectedProfile = helper.getProfile(profileNames.get(position).getId());//profile to be displayed
+
+        myIntent.putExtra("PROFILE_NAME", selectedProfile.getName().toString());
+        myIntent.putExtra("PROFILE_WIFI", selectedProfile.getWifi());
+        myIntent.putExtra("PROFILE_RINGTONE", Integer.toString(selectedProfile.getRingtone()));
+        myIntent.putExtra("PROFILE_MEDIA", Integer.toString(selectedProfile.getMedia()));
+        myIntent.putExtra("PROFILE_NOTIFICATIONS", Integer.toString(selectedProfile.getNotification()));
+        myIntent.putExtra("PROFILE_SYSTEM", Integer.toString(selectedProfile.getSystem()));
+
+        view.getContext().startActivity(myIntent);
     }
 
 }
