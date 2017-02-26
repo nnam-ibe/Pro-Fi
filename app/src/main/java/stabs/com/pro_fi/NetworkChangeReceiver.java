@@ -27,7 +27,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 
     public boolean isConnected(){return isWifiConnected;}
 
-//  TODO: Fix onReceive getting called twice
+//  TODO: onReceive gets called twice
     @Override
     public void onReceive( Context context, final Intent intent) {
         // Check if in manual mode or automatic
