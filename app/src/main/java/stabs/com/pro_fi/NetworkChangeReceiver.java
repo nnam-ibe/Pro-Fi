@@ -3,46 +3,64 @@ package stabs.com.pro_fi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
+import android.content.SharedPreferences;
 import android.util.Log;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by OGBA on 2017-01-29.
  */
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
-
-
     private static NetworkChangeReceiver mInstance = null;
     public static boolean isWifiConnected = true;
-    public static final String TAG = "NETWORKCHANGERECEIVER";
+    public static final String TAG = "NetworkChangeReceiver";
     public String wifiName;
+
     public static NetworkChangeReceiver getInstance() {
         if (mInstance == null) {
             mInstance = new NetworkChangeReceiver();
         }
         return mInstance;
     }
-    public boolean isConnected(){return isWifiConnected;}
-    @Override
-    public void onReceive(final Context context, final Intent intent) {
 
-        ConnectivityManager connec = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifi = connec.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (wifi.isConnected()) {
-            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-            if (connectionInfo != null && !(connectionInfo.getSSID().equals(""))) {
-                wifiName=connectionInfo.getSSID().replace("\"", "");
-            }
-            isWifiConnected = true;
-           Log.e(TAG, "We are Connected to "+wifiName);
+    public boolean isConnected(){return isWifiConnected;}
+
+//  TODO: Fix onReceive getting called twice
+    @Override
+    public void onReceive( Context context, final Intent intent) {
+        // Check if in manual mode or automatic
+        SharedPreferences sharedPrefs = context.getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
+        boolean isAutomatic = sharedPrefs.getBoolean("AutomaticSelect", false);
+
+        // If in manual mode, nothing to do here, return.
+        if (isAutomatic) {
+            NetworkService networkService = new NetworkService(context);
+            networkService.checkConnection();
         } else {
-            Log.e(TAG, "We are not Connected to "+wifiName);
-            isWifiConnected = false;
+            Log.e(TAG, "In Manual Mode");
         }
+
+
+//        TODO: Moved connection logic to NetworkService.
+//        ConnectivityManager connec = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo wifi = connec.getActiveNetworkInfo();
+//        if (wifi != null && wifi.isConnected() && wifi.getType() == ConnectivityManager.TYPE_WIFI) {
+//            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+//            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+//            if (connectionInfo != null && !(connectionInfo.getSSID().equals(""))) {
+//                wifiName=connectionInfo.getSSID().replace("\"", "");
+//                Log.e(TAG, "We are Connected to " + wifiName);
+//            }
+//
+//            isWifiConnected = true;
+//            NetworkService networkService = new NetworkService(context);
+//            networkService.activateProfile(wifiName);
+//        } else {
+//            Log.e(TAG, "No WiFi connection");
+//            isWifiConnected = false;
+//        }
     }
+
 }
