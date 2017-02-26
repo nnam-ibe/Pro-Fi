@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.RecoverySystem;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -159,6 +158,37 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if(cursor!=null && cursor.moveToNext()) {
             return new Profile(profileId,
+                    cursor.getString(cursor.getColumnIndex(PROFILE_NAME)),
+                    cursor.getString(cursor.getColumnIndex(WIFI_NAME)),
+                    cursor.getInt(cursor.getColumnIndex(PROFILE_RINGTONE)),
+                    cursor.getInt(cursor.getColumnIndex(PROFILE_MEDIA)),
+                    cursor.getInt(cursor.getColumnIndex(PROFILE_NOTIFICATIONS)),
+                    cursor.getInt(cursor.getColumnIndex(PROFILE_SYSTEM)));
+        }
+        return null;
+    }
+
+    /**
+     * Helper method to retrieve a profile from the db, based on its wifiName
+     * @param wifiName the name of the profile's WiFi
+     * @return the profile corresponding to the wifiName.
+     *          returns null if no profile is found with the wifiName.
+     */
+    public Profile getProfile(String wifiName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor cursor = db.query(PROFILE_TABLE,
+                new String[]{PROFILE_ID, PROFILE_NAME, WIFI_NAME, PROFILE_RINGTONE, PROFILE_MEDIA, PROFILE_NOTIFICATIONS, PROFILE_SYSTEM},
+                WIFI_NAME + "=?",
+                new String[]{wifiName},
+                null,
+                null,
+                null,
+                null);
+
+        if(cursor!=null && cursor.moveToNext()) {
+            return new Profile(
+                    cursor.getInt(cursor.getColumnIndex(PROFILE_ID)),
                     cursor.getString(cursor.getColumnIndex(PROFILE_NAME)),
                     cursor.getString(cursor.getColumnIndex(WIFI_NAME)),
                     cursor.getInt(cursor.getColumnIndex(PROFILE_RINGTONE)),
