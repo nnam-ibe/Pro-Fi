@@ -195,7 +195,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         DBHelper helper = DBHelper.getInstance(view.getContext());
         Profile selectedProfile = helper.getProfile(profileNames.get(position).getId());//profile to be displayed
 
-        myIntent.putExtra("PROFILE_NAME", selectedProfile.getName().toString());
+        myIntent.putExtra("PROFILE_NAME", selectedProfile.getName());
         myIntent.putExtra("PROFILE_WIFI", selectedProfile.getWifi());
         myIntent.putExtra("PROFILE_RINGTONE", Integer.toString(selectedProfile.getRingtone()));
         myIntent.putExtra("PROFILE_MEDIA", Integer.toString(selectedProfile.getMedia()));

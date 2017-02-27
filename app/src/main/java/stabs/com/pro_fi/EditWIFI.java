@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,8 +40,15 @@ public class EditWIFI extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add1_activity_layout);
+        setContentView(R.layout.edit1_activity_layout);
         initialise();
+//        FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.done1);
+//        myFab.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                updateProfile(findViewById(R.id.done1));
+//
+//            }
+//        });
 
         //Display current profile wifi
         wifiTxt.setText(getIntent().getStringExtra("WIFI"));
@@ -112,7 +120,7 @@ public class EditWIFI extends AppCompatActivity{
             //Update contents profileInfo in DB.
             helper.updateProfile(profile);
 
-            Toast.makeText(this, profileInfo[0]+"updated", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, profileInfo[0]+" updated", Toast.LENGTH_SHORT).show();
 
             //Switch to Home screen
             Intent myIntent=new Intent(this,MainActivity.class);
