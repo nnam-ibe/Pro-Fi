@@ -21,6 +21,7 @@ public class EditProfileActivity extends AppCompatActivity {
     float scale=1.4f;
     FloatingActionButton imb;
     EditText et;
+    String oldName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
         //Show all profile Settings
         //Show profile name
-        et.setText(getIntent().getStringExtra("PROFILE_NAME"));
+        oldName=getIntent().getStringExtra("PROFILE_NAME");
+        et.setText(oldName);
 
         //Show ringtone setting
         ring.setProgress(Integer.valueOf(getIntent().getStringExtra("PROFILE_RINGTONE")));
@@ -122,8 +124,19 @@ public class EditProfileActivity extends AppCompatActivity {
     public void edit1_method(View v){
 
         //Display toast if name is not entered
-        if
-                (et.getText().length()<=0) Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
+        DBHelper helper = DBHelper.getInstance(this);
+         String currentName=et.getText().toString();
+        //Display toast if name is not entered
+        if (et.getText().length()<=0)
+        {
+            Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
+        }
+        //String match= SELECT  FROM ;
+        else if(!(helper.isUnique(currentName))&& !(currentName.equals(oldName)))
+        {
+            Toast.makeText(this, "This Profile Name already Exists", Toast.LENGTH_SHORT).show();
+
+        }
         else{
             Intent myIntent=new Intent(this,EditWIFI.class);
 
@@ -134,6 +147,7 @@ public class EditProfileActivity extends AppCompatActivity {
             myIntent.putExtra("MEDIA", Integer.toString(media.getProgress()));
             myIntent.putExtra("NOTIFICATIONS", Integer.toString(notif.getProgress()));
             myIntent.putExtra("SYSTEM", Integer.toString(sys.getProgress()));
+            myIntent.putExtra("PROFILE_ID",getIntent().getIntExtra("PROFILE_ID",100));
             startActivity(myIntent);
         }
     }

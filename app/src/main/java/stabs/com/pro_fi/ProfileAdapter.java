@@ -201,6 +201,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         myIntent.putExtra("PROFILE_MEDIA", Integer.toString(selectedProfile.getMedia()));
         myIntent.putExtra("PROFILE_NOTIFICATIONS", Integer.toString(selectedProfile.getNotification()));
         myIntent.putExtra("PROFILE_SYSTEM", Integer.toString(selectedProfile.getSystem()));
+        myIntent.putExtra("PROFILE_ID",selectedProfile.getId());
 
         view.getContext().startActivity(myIntent);
     }

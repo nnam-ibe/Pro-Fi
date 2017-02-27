@@ -87,9 +87,11 @@ public class EditWIFI extends AppCompatActivity{
 
     public void updateProfile(View v){
         profileInfo[1] = wifiTxt.getText().toString();
+        String currentWIFI =profileInfo[1];
+        String oldWIFI=getIntent().getStringExtra("WIFI");
         DBHelper helper= DBHelper.getInstance(this);
 
-        if(!(helper.isUniqueWIFI(profileInfo[1])))
+        if(!(helper.isUniqueWIFI(currentWIFI))&&!(currentWIFI.equals(oldWIFI))) // Allow if the name did not change
         {
             Toast.makeText(this, "WiFi name taken", Toast.LENGTH_SHORT).show();
 
@@ -104,6 +106,8 @@ public class EditWIFI extends AppCompatActivity{
                     Integer.parseInt(profileInfo[4]),
                     Integer.parseInt(profileInfo[5])
             );
+
+            profile.setId(getIntent().getIntExtra("PROFILE_ID",500));
 
             //Update contents profileInfo in DB.
             helper.updateProfile(profile);
