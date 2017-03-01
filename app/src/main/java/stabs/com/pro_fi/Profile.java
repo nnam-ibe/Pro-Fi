@@ -1,7 +1,5 @@
 package stabs.com.pro_fi;
 
-import org.w3c.dom.ProcessingInstruction;
-
 /**
  * Blueprint of a profile
  */
@@ -101,5 +99,10 @@ public class Profile {
 
     public void setWifi(String wifi) {
         this.wifi = wifi;
+    }
+
+    @Override
+    public boolean equals(Object profile) {
+        return profile instanceof Profile && ((Profile) profile).getId() == this.getId();
     }
 }

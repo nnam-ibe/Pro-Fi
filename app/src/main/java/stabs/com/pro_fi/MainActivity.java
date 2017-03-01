@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(layoutManager);
-            RecyclerView.Adapter mAdapter = new ProfileAdapter(list);
+            RecyclerView.Adapter mAdapter = new ProfileAdapter(list, this);
             recyclerView.setAdapter(mAdapter);
         }
         SharedPreferences sharedPrefs = getSharedPreferences("com.profi.xyz", MODE_PRIVATE);

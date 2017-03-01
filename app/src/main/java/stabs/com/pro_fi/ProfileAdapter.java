@@ -3,7 +3,7 @@ package stabs.com.pro_fi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.AudioManager;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -19,21 +19,29 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * Adapter to manage the recycler view.
  */
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
 
     //private Fragment mFragment;
-    AudioManager myAudioManager;
-    String TAG ="ProfileAdapter";
+    private static final String TAG ="ProfileAdapter";
+
+    private NetworkService networkService;
+    private SharedPreferences sharedPrefs;
+    private Context context;
     boolean []fade;
     public ArrayList<Profile> profileNames;
     boolean check;
-    public ProfileAdapter(ArrayList<Profile> list)
+
+    public ProfileAdapter(ArrayList<Profile> list, Context context)
     {
         profileNames = list;
-
+        networkService = new NetworkService(context);
+        sharedPrefs = context.getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
+        this.context = context;
     }
 
     public void delete_Diag(final View view, final int position) {
@@ -111,37 +119,15 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         v.setAlpha((float) 1);
         fade[pos]=false;
     }
-    public Profile getProfile(){return null;}
-    public void activateProfile(View v,Profile profile, boolean Vib)
-    {
-        // Boolean Vib is for vibration
-        //TODO implement option for vibrate and silent
-        int RING =profile.getRingtone();
-        int NOTIF=profile.getNotification();
-        int SYS  =profile.getSystem();
-        int MEDIA=profile.getMedia();
-
-
-
-        myAudioManager = (AudioManager)v.getContext().getSystemService(Context.AUDIO_SERVICE);
-       // myAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-        myAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, MEDIA, 0);
-        myAudioManager.setStreamVolume(AudioManager.STREAM_RING,RING, 0);
-        myAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION,NOTIF, 0);
-        myAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,SYS, 0);
-
-
-
-        Log.e(TAG, "VALUES " + MEDIA +" "+ RING +" "+ NOTIF+" " + SYS);
-
-
-
-    }
 
     @Override
     public void onBindViewHolder(final ProfileAdapter.ViewHolder holder, final int position) {
         final Profile profileName = profileNames.get(position);
         holder.textView.setText(profileName.getName());
+        int activeProfile = sharedPrefs.getInt(NetworkService.ACTIVE_PROFILE, -1);
+        Log.d(TAG, profileName.getName() + ": " + profileName.getId() + " V Active profile: " + activeProfile);
+        holder.itemView.setActivated(profileName.getId() == activeProfile);
+
         holder.v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,8 +136,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         holder.v.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                activateProfile(v, profileName, true);
-                //MainActivity.activateProfile(profileName,true);
+                int activeProfile = sharedPrefs.getInt(NetworkService.ACTIVE_PROFILE, -1);
+                networkService.activateProfile(profileName);
+                Profile profile = DBHelper.getInstance(context).getProfile(activeProfile);
+                int index = profileNames.indexOf(profile);
+                ProfileAdapter.this.notifyItemChanged(index);
+                ProfileAdapter.this.notifyItemChanged(holder.getAdapterPosition());
+
                 Toast.makeText(v.getContext(), profileName.getName() + " Activated", Toast.LENGTH_SHORT).show();
                 return true;
             }

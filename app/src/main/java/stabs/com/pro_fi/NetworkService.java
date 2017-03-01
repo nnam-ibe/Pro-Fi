@@ -1,6 +1,7 @@
 package stabs.com.pro_fi;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -8,11 +9,14 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * Service to enable/disable profiles.
  */
 public class NetworkService {
     private static final String TAG = "NetworkService";
+    public static final String ACTIVE_PROFILE = "ACTIVE_PROFILE";
 
     private Context context;
     private AudioManager myAudioManager;
@@ -45,6 +49,10 @@ public class NetworkService {
         myAudioManager.setStreamVolume(AudioManager.STREAM_RING, profile.getRingtone(), 0);
         myAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, profile.getNotification(), 0);
         myAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, profile.getSystem(), 0);
+
+        SharedPreferences.Editor editor = context.getSharedPreferences("com.profi.xyz", MODE_PRIVATE).edit();
+        editor.putInt(ACTIVE_PROFILE, profile.getId());
+        editor.apply();
     }
 
     /**
