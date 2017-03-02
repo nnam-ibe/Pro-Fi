@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -80,7 +79,7 @@ public class EditWIFI extends AppCompatActivity{
             recyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(layoutManager);
-            RecyclerView.Adapter mAdapter = new WifiAdapter((ArrayList<String>) names, wifiTxt);
+            RecyclerView.Adapter mAdapter = new WifiAdapter((ArrayList<String>) names);
             recyclerView.setAdapter(mAdapter);
         }
 

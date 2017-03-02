@@ -1,18 +1,10 @@
 package stabs.com.pro_fi;
 
-import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -24,14 +16,15 @@ import java.util.ArrayList;
  * Adapter to manage the recycler view.
  */
 public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
-    WifiAdapter context=this;
-    public ArrayList<String> profileNames;
-    public static TextView wifiTxt;
+    private ArrayList<String> profileNames;
+    private int activeIndex;
+    public String wifiName;
 
-    public WifiAdapter(ArrayList<String> list, TextView wifiField)
+    public WifiAdapter(ArrayList<String> list)
     {
         profileNames = list;
-        wifiTxt = wifiField;
+        activeIndex = -1;
+        wifiName = null;
     }
 
     @Override
@@ -42,9 +35,23 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(WifiAdapter.ViewHolder holder, int position) {
-        String profileName = profileNames.get(position);
+    public void onBindViewHolder(final WifiAdapter.ViewHolder holder, final int position) {
+        final String profileName = profileNames.get(position);
         holder.wifiCard.setText(profileName);
+        holder.itemView.setActivated(activeIndex == position);
+        holder.v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        v.setActivated(true);
+                        wifiName = profileNames.get(holder.getAdapterPosition());
+                        WifiAdapter.this.notifyItemChanged(holder.getAdapterPosition());
+                        if (activeIndex != -1) {
+                            WifiAdapter.this.notifyItemChanged(activeIndex);
+                        }
+                        activeIndex = holder.getAdapterPosition();
+                    }
+                }
+        );
     }
 
     @Override
@@ -54,15 +61,11 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView wifiCard;
+        public View v;
         public ViewHolder(View v) {
             super(v);
+            this.v = v;
             wifiCard = (TextView)v.findViewById(R.id.name_text_view);
-            wifiCard.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    wifiTxt.setText(wifiCard.getText().toString());
-                }
-            });
         }
     }
 

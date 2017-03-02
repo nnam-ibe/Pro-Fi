@@ -111,7 +111,7 @@
                     android:layout_marginBottom="5dp"
                     android:textStyle="italic"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/Media"
+                    android:text="@string/media"
                     />
 
                 <ImageView
