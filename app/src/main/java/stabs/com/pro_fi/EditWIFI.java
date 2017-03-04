@@ -31,6 +31,7 @@ public class EditWIFI extends AppCompatActivity{
     List<String> scannedNetworks=new ArrayList<String>(); //
     RecyclerView recyclerView;
     Profile profile;
+    int activeIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +67,9 @@ public class EditWIFI extends AppCompatActivity{
         }
         Collections.sort(names);
 
-        String oldWIFI = getIntent().getStringExtra("WIFI");
-        int activeIndex = names.indexOf(oldWIFI);
+        String oldWIFI = getIntent().getStringExtra(Profile.WIFI);
+        activeIndex = names.indexOf(oldWIFI);
+        Log.d(TAG, "Active Index: " + activeIndex + "; " + oldWIFI);
 
         if (recyclerView != null) {
             recyclerView.setHasFixedSize(true);
@@ -97,14 +99,7 @@ public class EditWIFI extends AppCompatActivity{
         boolean isUnique = helper.isUnique(DBHelper.WIFI_NAME, profile.getWifi(), oldWIFI);
 
         if (isUnique) {
-            boolean updated = helper.updateProfile(profile);
-
-            if(updated) {
-                Log.d(TAG, "Profile updated, ID was: " + id);
-            } else {
-                Log.d(TAG, "Profile failed to update, ID was: " + id);
-            }
-
+            helper.updateProfile(profile);
             Toast.makeText(this, profile.getName() + " updated", Toast.LENGTH_SHORT).show();
 
             //Switch to Home screen

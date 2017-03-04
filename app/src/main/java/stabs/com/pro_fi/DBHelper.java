@@ -117,25 +117,32 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean isUnique(String name)
-    {
+    /**
+     * Checks if a new value for a given column in the database is unique
+     * @param column: the column to look up, e.g. PROFILE_NAME
+     * @param newValue the unique value to search against
+     * @param oldValue the old value of the column to exclude
+     * @return True if newValue is not present in column (is unique), False otherwise
+     */
+    public boolean isUnique(String column, String newValue, String oldValue) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String query= "SELECT " + PROFILE_NAME +
-                      " FROM " + PROFILE_TABLE +
-                      " WHERE " + PROFILE_NAME+ " = '" + name + "'";
+        String query = "SELECT " + column +
+                " FROM " + PROFILE_TABLE +
+                " WHERE " + column + " = '" + newValue + "'" +
+                " AND " + column + " != '" + oldValue + "'";
         Cursor cursor= db.rawQuery(query,null);
         return cursor.getCount()==0;
 
     }
-    public boolean isUniqueWIFI(String name)
-    {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String query= "SELECT " + WIFI_NAME +
-                " FROM " + PROFILE_TABLE +
-                " WHERE " + WIFI_NAME+ " = '" + name + "'";
-        Cursor cursor= db.rawQuery(query,null);
-        return cursor.getCount()==0;
 
+    /**
+     * Checks if a value is unique for column in the database
+     * @param column the column to look up, e.g. PROFILE_NAME
+     * @param value the unique value to search against
+     * @return True if newValue is not present in column (is unique), False otherwise
+     */
+    public boolean isUnique(String column, String value) {
+        return isUnique(column, value, "");
     }
 
     /**

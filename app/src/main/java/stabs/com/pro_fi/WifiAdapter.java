@@ -18,13 +18,11 @@ import java.util.ArrayList;
 public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
     private ArrayList<String> profileNames;
     private int activeIndex;
-    private String wifiName;
 
     public WifiAdapter(ArrayList<String> list)
     {
         profileNames = list;
         activeIndex = -1;
-        wifiName = null;
     }
 
     @Override
@@ -43,7 +41,6 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
                     @Override
                     public void onClick(View v) {
                         v.setActivated(true);
-                        wifiName = profileNames.get(holder.getAdapterPosition());
                         WifiAdapter.this.notifyItemChanged(holder.getAdapterPosition());
                         if (activeIndex != -1) {
                             WifiAdapter.this.notifyItemChanged(activeIndex);
@@ -60,7 +57,7 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
     }
 
     public String getWifiName() {
-        return wifiName;
+        return profileNames.get(activeIndex);
     }
 
     public void setActiveIndex(int activeIndex) {

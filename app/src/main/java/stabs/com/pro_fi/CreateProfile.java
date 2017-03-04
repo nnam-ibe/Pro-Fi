@@ -80,10 +80,10 @@ public class CreateProfile extends AppCompatActivity {
 
             //Pass all info
             myIntent.putExtra(Profile.NAME, name);
-            myIntent.putExtra(Profile.RINGTONE, Integer.toString(ring.getProgress()));
-            myIntent.putExtra(Profile.MEDIA, Integer.toString(media.getProgress()));
-            myIntent.putExtra(Profile.NOTIFICATION, Integer.toString(notif.getProgress()));
-            myIntent.putExtra(Profile.SYSTEM, Integer.toString(sys.getProgress()));
+            myIntent.putExtra(Profile.RINGTONE, ring.getProgress());
+            myIntent.putExtra(Profile.MEDIA, media.getProgress());
+            myIntent.putExtra(Profile.NOTIFICATION, notif.getProgress());
+            myIntent.putExtra(Profile.SYSTEM, sys.getProgress());
             startActivity(myIntent);
         }
     }

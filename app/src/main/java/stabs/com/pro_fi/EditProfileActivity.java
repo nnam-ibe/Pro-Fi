@@ -85,6 +85,7 @@ public class EditProfileActivity extends AppCompatActivity {
     public void next(View v){
         DBHelper helper = DBHelper.getInstance(this);
         String oldName = getIntent().getStringExtra(Profile.NAME);
+        String oldWifi = getIntent().getStringExtra(Profile.WIFI);
 
         //Display toast if name is not entered
         String name = profileEditText.getText().toString().trim();
@@ -100,6 +101,7 @@ public class EditProfileActivity extends AppCompatActivity {
             //Pass all info
             myIntent.putExtra(Profile.ID, profileId);
             myIntent.putExtra(Profile.NAME, name);
+            myIntent.putExtra(Profile.WIFI, oldWifi);
             myIntent.putExtra(Profile.RINGTONE, ring.getProgress());
             myIntent.putExtra(Profile.MEDIA, media.getProgress());
             myIntent.putExtra(Profile.NOTIFICATION, notif.getProgress());
