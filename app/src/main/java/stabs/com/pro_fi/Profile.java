@@ -5,6 +5,13 @@ package stabs.com.pro_fi;
  */
 
 public class Profile {
+    public static final String ID = "ID";
+    public static final String NAME = "NAME";
+    public static final String WIFI = "WIFI";
+    public static final String RINGTONE = "RINGTONE";
+    public static final String MEDIA ="MEDIA";
+    public static final String NOTIFICATION = "NOTIFICATIONS";
+    public static final String SYSTEM = "SYSTEM";
 
     private int id;
     private String name;

@@ -36,8 +36,12 @@
             android:name=".CreateProfile"
             android:label="@string/new_profile"
             android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".EditProfileActivity"/>
-        <activity android:name=".EditWIFI"/>
+        <activity android:name=".EditProfileActivity"
+            android:label="@string/edit_profile"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".EditWIFI"
+            android:label="@string/wifi_trigger"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".AddWIFI"
             android:label="@string/wifi_trigger"

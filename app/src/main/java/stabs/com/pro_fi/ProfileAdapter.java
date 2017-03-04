@@ -186,13 +186,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         DBHelper helper = DBHelper.getInstance(view.getContext());
         Profile selectedProfile = helper.getProfile(profileNames.get(position).getId());//profile to be displayed
 
-        myIntent.putExtra("PROFILE_NAME", selectedProfile.getName());
-        myIntent.putExtra("PROFILE_WIFI", selectedProfile.getWifi());
-        myIntent.putExtra("PROFILE_RINGTONE", Integer.toString(selectedProfile.getRingtone()));
-        myIntent.putExtra("PROFILE_MEDIA", Integer.toString(selectedProfile.getMedia()));
-        myIntent.putExtra("PROFILE_NOTIFICATIONS", Integer.toString(selectedProfile.getNotification()));
-        myIntent.putExtra("PROFILE_SYSTEM", Integer.toString(selectedProfile.getSystem()));
-        myIntent.putExtra("PROFILE_ID",selectedProfile.getId());
+        myIntent.putExtra(Profile.ID, selectedProfile.getId());
+        myIntent.putExtra(Profile.NAME, selectedProfile.getName());
+        myIntent.putExtra(Profile.WIFI, selectedProfile.getWifi());
+        myIntent.putExtra(Profile.RINGTONE, selectedProfile.getRingtone());
+        myIntent.putExtra(Profile.MEDIA, selectedProfile.getMedia());
+        myIntent.putExtra(Profile.NOTIFICATION, selectedProfile.getNotification());
+        myIntent.putExtra(Profile.SYSTEM, selectedProfile.getSystem());
 
         view.getContext().startActivity(myIntent);
     }

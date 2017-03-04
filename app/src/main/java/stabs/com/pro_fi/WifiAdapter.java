@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
     private ArrayList<String> profileNames;
     private int activeIndex;
-    public String wifiName;
+    private String wifiName;
 
     public WifiAdapter(ArrayList<String> list)
     {
@@ -57,6 +57,14 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return profileNames.size();
+    }
+
+    public String getWifiName() {
+        return wifiName;
+    }
+
+    public void setActiveIndex(int activeIndex) {
+        this.activeIndex = activeIndex;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

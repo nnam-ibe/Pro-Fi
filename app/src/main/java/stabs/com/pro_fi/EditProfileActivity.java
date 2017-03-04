@@ -1,154 +1,163 @@
 package stabs.com.pro_fi;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.support.annotation.IntegerRes;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 public class EditProfileActivity extends AppCompatActivity {
 
+    private TextInputLayout profileLayout;
+    private TextInputEditText profileEditText;
+
+    private int profileId;
     private SeekBar ring,notif,media,sys;
     final int MAX_SEEK=15;
     float scale=1.4f;
-    FloatingActionButton imb;
-    EditText et;
-    String oldName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.edit0_activity_layout);
-        initialise();
+        setContentView(R.layout.add0_activity_layout);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Listener class for seekbars
-        class SeekListener implements SeekBar.OnSeekBarChangeListener{
+        profileLayout = (TextInputLayout)findViewById(R.id.name_layout);
+        profileEditText = (TextInputEditText)findViewById(R.id.profile_name);
+        Button backButton = (Button) findViewById(R.id.back_button);
 
-            SeekBar s;
-
-            public SeekListener(SeekBar seekBar){
-                s = seekBar;
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int val, boolean fromUser){
-                s.setProgress(val);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar){}
-
-            @Override
-            public  void onStopTrackingTouch(SeekBar seekBar){}
-
+        ring = (SeekBar) findViewById(R.id.ringtone_seekbar);
+        notif = (SeekBar) findViewById(R.id.notifications_seekbar);
+        media = (SeekBar) findViewById(R.id.media_seekbar);
+        sys = (SeekBar) findViewById(R.id.system_seekbar);
+        SeekBar [] sound={ring,notif,media,sys};
+        for (SeekBar aSound : sound) {
+            aSound.setScaleY(scale);
+            aSound.setScaleX(scale);
         }
+
+        //Show all profile Settings
+        //Show profile name
+        profileId = getIntent().getIntExtra(Profile.ID, -1);
+        String name = getIntent().getStringExtra(Profile.NAME);
+        profileEditText.setText(name);
+
+        //Show ringtone setting
+        ring.setProgress(getIntent().getIntExtra(Profile.RINGTONE, 0));
+
+        //Show media setting
+        media.setProgress(getIntent().getIntExtra(Profile.MEDIA, 0));
+
+        //Show notifications setting
+        notif.setProgress(getIntent().getIntExtra(Profile.NOTIFICATION, 0));
+
+        //Show system setting
+        sys.setProgress(getIntent().getIntExtra(Profile.SYSTEM, 0));
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         //Add listeners to seekbars
         ring.setOnSeekBarChangeListener(new SeekListener(ring));ring.setMax(MAX_SEEK);
         media.setOnSeekBarChangeListener(new SeekListener(media)); media.setMax(MAX_SEEK);
         notif.setOnSeekBarChangeListener(new SeekListener(notif));notif.setMax(MAX_SEEK);
         sys.setOnSeekBarChangeListener(new SeekListener(sys));sys.setMax(MAX_SEEK);
-
-        //Show all profile Settings
-        //Show profile name
-        oldName=getIntent().getStringExtra("PROFILE_NAME");
-        et.setText(oldName);
-
-        //Show ringtone setting
-        ring.setProgress(Integer.valueOf(getIntent().getStringExtra("PROFILE_RINGTONE")));
-
-        //Show media setting
-        media.setProgress(Integer.valueOf(getIntent().getStringExtra("PROFILE_MEDIA")));
-
-        //Show notifications setting
-        notif.setProgress(Integer.valueOf(getIntent().getStringExtra("PROFILE_NOTIFICATIONS")));
-
-        //Show system setting
-        sys.setProgress(Integer.valueOf(getIntent().getStringExtra("PROFILE_SYSTEM")));
-
-        et.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before,
-                                      int count) {
-
-                //Disable next button if name is not entered by just changing the color.
-                if (s.toString().equals("")) {
-                    imb.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.disabledColor)));
-
-                } else {
-                    imb.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimaryDark)));
-
-                }
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count,
-                                          int after) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
     }
 
-    // Method for initializing variables
-    public void initialise(){
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
 
-        et=(EditText)findViewById(R.id.nameTxt);
-        imb=(FloatingActionButton)findViewById(R.id.next); //Next button
-        ring = (SeekBar) findViewById(R.id.ringtone_seekbar);
-        notif = (SeekBar) findViewById(R.id.notifications_seekbar);
-        media = (SeekBar) findViewById(R.id.media_seekbar);
-        sys = (SeekBar) findViewById(R.id.system_seekbar);
-        SeekBar [] sound={ring,notif,media,sys};
-        for (int i = 0; i < sound.length; i++) {
-            sound[i].setScaleY(scale);
-            sound[i].setScaleX(scale);
+        if (id == android.R.id.home) {
+            onBackPressed();
         }
-
+        return super.onOptionsItemSelected(item);
     }
 
-    public void edit1_method(View v){
-
-        //Display toast if name is not entered
+    public void next(View v){
         DBHelper helper = DBHelper.getInstance(this);
-         String currentName=et.getText().toString();
+        String oldName = getIntent().getStringExtra(Profile.NAME);
+
         //Display toast if name is not entered
-        if (et.getText().length()<=0)
-        {
-            Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
-        }
-        //String match= SELECT  FROM ;
-        else if(!(helper.isUnique(currentName))&& !(currentName.equals(oldName)))
-        {
-            Toast.makeText(this, "This Profile Name already Exists", Toast.LENGTH_SHORT).show();
+        String name = profileEditText.getText().toString().trim();
+        if (name.isEmpty()) {
+            profileLayout.setError(getString(R.string.enter_a_name));
+            profileEditText.requestFocus();
+        } else if(!helper.isUnique(DBHelper.PROFILE_NAME, name, oldName)) {
+            profileLayout.setError(getString(R.string.name_exists_errr));
+            profileEditText.requestFocus();
+        } else {
+            Intent myIntent = new Intent(this,EditWIFI.class);
 
-        }
-        else{
-            Intent myIntent=new Intent(this,EditWIFI.class);
-
-            //Pass all info to next activity
-            myIntent.putExtra("NAME_TXT_VAL", et.getText().toString());
-            myIntent.putExtra("WIFI", getIntent().getStringExtra("PROFILE_WIFI"));
-            myIntent.putExtra("RINGTONE", Integer.toString(ring.getProgress()));
-            myIntent.putExtra("MEDIA", Integer.toString(media.getProgress()));
-            myIntent.putExtra("NOTIFICATIONS", Integer.toString(notif.getProgress()));
-            myIntent.putExtra("SYSTEM", Integer.toString(sys.getProgress()));
-            myIntent.putExtra("PROFILE_ID",getIntent().getIntExtra("PROFILE_ID",100));
+            //Pass all info
+            myIntent.putExtra(Profile.ID, profileId);
+            myIntent.putExtra(Profile.NAME, name);
+            myIntent.putExtra(Profile.RINGTONE, ring.getProgress());
+            myIntent.putExtra(Profile.MEDIA, media.getProgress());
+            myIntent.putExtra(Profile.NOTIFICATION, notif.getProgress());
+            myIntent.putExtra(Profile.SYSTEM, sys.getProgress());
             startActivity(myIntent);
         }
+    }
+
+//    public void edit1_method(View v){
+//
+//        //Display toast if name is not entered
+//        DBHelper helper = DBHelper.getInstance(this);
+//         String currentName=et.getText().toString();
+//        //Display toast if name is not entered
+//        if (et.getText().length()<=0)
+//        {
+//            Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
+//        }
+//        //String match= SELECT  FROM ;
+//        else if(!(helper.isUnique(currentName))&& !(currentName.equals(oldName)))
+//        {
+//            Toast.makeText(this, "This Profile Name already Exists", Toast.LENGTH_SHORT).show();
+//
+//        }
+//        else{
+//            Intent myIntent=new Intent(this,EditWIFI.class);
+//
+//            //Pass all info to next activity
+//            myIntent.putExtra("NAME_TXT_VAL", et.getText().toString());
+//            myIntent.putExtra("WIFI", getIntent().getStringExtra("PROFILE_WIFI"));
+//            myIntent.putExtra("RINGTONE", Integer.toString(ring.getProgress()));
+//            myIntent.putExtra("MEDIA", Integer.toString(media.getProgress()));
+//            myIntent.putExtra("NOTIFICATIONS", Integer.toString(notif.getProgress()));
+//            myIntent.putExtra("SYSTEM", Integer.toString(sys.getProgress()));
+//            myIntent.putExtra("PROFILE_ID",getIntent().getIntExtra("PROFILE_ID",100));
+//            startActivity(myIntent);
+//        }
+//    }
+
+    // Listener class for seekbars
+    class SeekListener implements SeekBar.OnSeekBarChangeListener{
+
+        private SeekBar s;
+
+        public SeekListener(SeekBar seekBar){
+            s = seekBar;
+        }
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int val, boolean fromUser){
+            s.setProgress(val);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar){}
+
+        @Override
+        public  void onStopTrackingTouch(SeekBar seekBar){}
+
     }
 }

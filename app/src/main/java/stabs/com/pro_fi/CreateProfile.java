@@ -41,10 +41,10 @@ public class CreateProfile extends AppCompatActivity {
         media = (SeekBar) findViewById(R.id.media_seekbar);
         sys = (SeekBar) findViewById(R.id.system_seekbar);
         SeekBar [] sound={ring,notif,media,sys};
-        for (int i = 0; i < sound.length; i++) {
+        for (SeekBar aSound : sound) {
             float scale = 1.4f;
-            sound[i].setScaleY(scale);
-            sound[i].setScaleX(scale);
+            aSound.setScaleY(scale);
+            aSound.setScaleX(scale);
         }
 
         //Add listeners to seekbars
@@ -72,18 +72,18 @@ public class CreateProfile extends AppCompatActivity {
         if (name.isEmpty()) {
             profileLayout.setError(getString(R.string.enter_a_name));
             profileEditText.requestFocus();
-        } else if(!(helper.isUnique(name))) {
+        } else if(!helper.isUnique(DBHelper.PROFILE_NAME, name)) {
             profileLayout.setError(getString(R.string.name_exists_errr));
             profileEditText.requestFocus();
         } else {
             Intent myIntent=new Intent(this,AddWIFI.class);
 
             //Pass all info
-            myIntent.putExtra(AddWIFI.NAME, name);
-            myIntent.putExtra(AddWIFI.RING, Integer.toString(ring.getProgress()));
-            myIntent.putExtra(AddWIFI.MEDIA, Integer.toString(media.getProgress()));
-            myIntent.putExtra(AddWIFI.NOTIF, Integer.toString(notif.getProgress()));
-            myIntent.putExtra(AddWIFI.SYS, Integer.toString(sys.getProgress()));
+            myIntent.putExtra(Profile.NAME, name);
+            myIntent.putExtra(Profile.RINGTONE, Integer.toString(ring.getProgress()));
+            myIntent.putExtra(Profile.MEDIA, Integer.toString(media.getProgress()));
+            myIntent.putExtra(Profile.NOTIFICATION, Integer.toString(notif.getProgress()));
+            myIntent.putExtra(Profile.SYSTEM, Integer.toString(sys.getProgress()));
             startActivity(myIntent);
         }
     }

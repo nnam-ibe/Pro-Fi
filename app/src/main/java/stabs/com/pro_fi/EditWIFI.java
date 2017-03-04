@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -20,54 +22,43 @@ import java.util.List;
  * Created by ethan on 2017-02-25.
  */
 public class EditWIFI extends AppCompatActivity{
-    public static final String NAME="NAME_TXT_VAL";
-    public static final String WIFI="WIFI";
-    public static final String RING="RINGTONE";
-    public static final String MEDIA="MEDIA";
-    public static final String NOTIF="NOTIFICATIONS";
-    public static final String SYS="SYSTEM";
+    private static final String TAG = "EditWIFI";
 
+    private WifiAdapter wifiAdapter;
     WifiManager wifi;
     List<WifiConfiguration> wifis;
     List<String> names=new ArrayList<String>(); // NAMES OF WIFI
     List<String> scannedNetworks=new ArrayList<String>(); //
-    String[] profileInfo = new String[6]; // ALL PROFILE DETAILS AND SETTINGS
-    TextView wifiTxt;
     RecyclerView recyclerView;
     Profile profile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.edit1_activity_layout);
-        initialise();
-//        FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.done1);
-//        myFab.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                updateProfile(findViewById(R.id.done1));
-//
-//            }
-//        });
+        setContentView(R.layout.add1_activity_layout);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
-        //Display current profile wifi
-        wifiTxt.setText(getIntent().getStringExtra("WIFI"));
+        Button backButton = (Button) findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
-        //Store info in this order - name, wifi, ringtone, media, notifications, system, into profileInfo
-        profileInfo[0] = getIntent().getStringExtra(NAME);
-        profileInfo[2] = getIntent().getStringExtra(RING);
-        profileInfo[3] = getIntent().getStringExtra(MEDIA);
-        profileInfo[4] = getIntent().getStringExtra(NOTIF);
-        profileInfo[5] = getIntent().getStringExtra(SYS);
+        profile = new Profile(getIntent().getIntExtra(Profile.ID, -1),
+                getIntent().getStringExtra(Profile.NAME),
+                getIntent().getStringExtra(Profile.WIFI),
+                getIntent().getIntExtra(Profile.RINGTONE, 0),
+                getIntent().getIntExtra(Profile.MEDIA, 0),
+                getIntent().getIntExtra(Profile.NOTIFICATION, 0),
+                getIntent().getIntExtra(Profile.SYSTEM, 0));
 
-        wifi=(WifiManager) getSystemService(Context.WIFI_SERVICE);
-        wifis=wifi.getConfiguredNetworks();
-        WifiConfiguration [] array= new WifiConfiguration[wifis.size()];
+        wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        wifis = wifi.getConfiguredNetworks();
+        WifiConfiguration [] array = new WifiConfiguration[wifis.size()];
         wifis.toArray(array);
-        names.add("None");// Empty spot
-
-        // Get List of ScanResults
-        // List<ScanResult> wifiList = wifi.getScanResults();
-        //names.add("Size "+wifiList.size());
 
         for(int i=0;i<wifis.size();i++)
         {
@@ -75,60 +66,52 @@ public class EditWIFI extends AppCompatActivity{
         }
         Collections.sort(names);
 
+        String oldWIFI = getIntent().getStringExtra("WIFI");
+        int activeIndex = names.indexOf(oldWIFI);
+
         if (recyclerView != null) {
             recyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(layoutManager);
-            RecyclerView.Adapter mAdapter = new WifiAdapter((ArrayList<String>) names);
-            recyclerView.setAdapter(mAdapter);
+            wifiAdapter = new WifiAdapter((ArrayList<String>) names);
+            wifiAdapter.setActiveIndex(activeIndex);
+            recyclerView.setAdapter(wifiAdapter);
         }
-
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, names);
-        //ListView wifi_list = (ListView) findViewById(R.id.wifi_List);
-        //wifi_list.setAdapter(adapter);
-        //Spinner spin =(Spinner)findViewById(R.id.spinner);
-        //ArrayAdapter<String> adapter= new ArrayAdapter<String>(
-        //        this, android.R.layout.simple_spinner_dropdown_item, names);
-        // spin.setAdapter(adapter);
     }
 
-    public void updateProfile(View v){
-        profileInfo[1] = wifiTxt.getText().toString();
-        String currentWIFI =profileInfo[1];
-        String oldWIFI=getIntent().getStringExtra("WIFI");
-        DBHelper helper= DBHelper.getInstance(this);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
 
-        if(!(helper.isUniqueWIFI(currentWIFI))&&!(currentWIFI.equals(oldWIFI))) // Allow if the name did not change
-        {
-            Toast.makeText(this, "WiFi name taken", Toast.LENGTH_SHORT).show();
-
+        if (id == android.R.id.home) {
+            onBackPressed();
         }
-        else
-        {
-            profile = new Profile(
-                    profileInfo[0],
-                    profileInfo[1],
-                    Integer.parseInt(profileInfo[2]),
-                    Integer.parseInt(profileInfo[3]),
-                    Integer.parseInt(profileInfo[4]),
-                    Integer.parseInt(profileInfo[5])
-            );
+        return super.onOptionsItemSelected(item);
+    }
 
-            profile.setId(getIntent().getIntExtra("PROFILE_ID",500));
+    public void saveProfile(View v){
+        profile.setWifi(wifiAdapter.getWifiName());
+        String oldWIFI = getIntent().getStringExtra(Profile.WIFI);
+        int id = getIntent().getIntExtra(Profile.ID, -1);
+        DBHelper helper = DBHelper.getInstance(this);
+        boolean isUnique = helper.isUnique(DBHelper.WIFI_NAME, profile.getWifi(), oldWIFI);
 
-            //Update contents profileInfo in DB.
-            helper.updateProfile(profile);
+        if (isUnique) {
+            boolean updated = helper.updateProfile(profile);
 
-            Toast.makeText(this, profileInfo[0]+" updated", Toast.LENGTH_SHORT).show();
+            if(updated) {
+                Log.d(TAG, "Profile updated, ID was: " + id);
+            } else {
+                Log.d(TAG, "Profile failed to update, ID was: " + id);
+            }
+
+            Toast.makeText(this, profile.getName() + " updated", Toast.LENGTH_SHORT).show();
 
             //Switch to Home screen
             Intent myIntent=new Intent(this,MainActivity.class);
             startActivity(myIntent);
-
-        }}
-
-    public void initialise(){
-        wifiTxt = (TextView) findViewById(R.id.wifiTxt);
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        } else {
+            Toast.makeText(this, "WiFi name taken", Toast.LENGTH_SHORT).show();
+        }
     }
 }

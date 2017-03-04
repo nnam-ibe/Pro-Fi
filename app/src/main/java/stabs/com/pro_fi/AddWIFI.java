@@ -20,12 +20,6 @@ import java.util.List;
 public class AddWIFI extends AppCompatActivity {
 
     public static final String TAG = "AddWifi";
-    public static final String NAME="NAME_TXT_VAL";
-    public static final String WIFI="WIFI";
-    public static final String RING="RINGTONE";
-    public static final String MEDIA="MEDIA";
-    public static final String NOTIF="NOTIFICATIONS";
-    public static final String SYS="SYSTEM";
 
     private WifiAdapter wifiAdapter;
     WifiManager wifi;
@@ -51,18 +45,18 @@ public class AddWIFI extends AppCompatActivity {
             }
         });
 
-        //Store info in this order - name, wifi, ringtone, media, notifications, system, into profileInfo
-        profileInfo[0] = getIntent().getStringExtra(NAME);
-        profileInfo[2] = getIntent().getStringExtra(RING);
-        profileInfo[3] = getIntent().getStringExtra(MEDIA);
-        profileInfo[4] = getIntent().getStringExtra(NOTIF);
-        profileInfo[5] = getIntent().getStringExtra(SYS);
+        profile = new Profile(
+                getIntent().getStringExtra(Profile.NAME),
+                "",
+                getIntent().getIntExtra(Profile.RINGTONE, 0),
+                getIntent().getIntExtra(Profile.MEDIA, 0),
+                getIntent().getIntExtra(Profile.NOTIFICATION, 0),
+                getIntent().getIntExtra(Profile.SYSTEM, 0));
 
         wifi=(WifiManager) getSystemService(Context.WIFI_SERVICE);
         wifis=wifi.getConfiguredNetworks();
         WifiConfiguration [] array= new WifiConfiguration[wifis.size()];
         wifis.toArray(array);
-        names.add("None");// Empty spot
 
         for(int i=0;i<wifis.size();i++)
         {
@@ -90,23 +84,14 @@ public class AddWIFI extends AppCompatActivity {
     }
 
     public void saveProfile(View v){
-        profileInfo[1] = wifiAdapter.wifiName;
+        profile.setWifi(wifiAdapter.getWifiName());
         DBHelper helper= DBHelper.getInstance(this);
 
-        if ( profileInfo[1] == null ) {
+        if ( profile.getWifi() == null ) {
             Toast.makeText(this, "Select a Wi-Fi", Toast.LENGTH_SHORT).show();
-        } else if(!(helper.isUniqueWIFI(profileInfo[1]))) {
+        } else if(!helper.isUnique(DBHelper.WIFI_NAME, profile.getWifi())) {
             Toast.makeText(this, "Wi-Fi already in use", Toast.LENGTH_SHORT).show();
         } else {
-            profile = new Profile(
-                    profileInfo[0],
-                    profileInfo[1],
-                    Integer.parseInt(profileInfo[2]),
-                    Integer.parseInt(profileInfo[3]),
-                    Integer.parseInt(profileInfo[4]),
-                    Integer.parseInt(profileInfo[5])
-            );
-
             //Write contents profileInfo to DB.
             helper.insertProfile(profile);
 
