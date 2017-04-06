@@ -1,3 +1,4 @@
 # Pro-Fi
 
-Simple Profile Manager based on your WiFi profiles.
+Simple sound profile manager based on your wifi status.
+
