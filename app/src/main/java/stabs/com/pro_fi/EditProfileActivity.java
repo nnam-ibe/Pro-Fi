@@ -110,37 +110,6 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
-//    public void edit1_method(View v){
-//
-//        //Display toast if name is not entered
-//        DBHelper helper = DBHelper.getInstance(this);
-//         String currentName=et.getText().toString();
-//        //Display toast if name is not entered
-//        if (et.getText().length()<=0)
-//        {
-//            Toast.makeText(this, "Please enter a name for the profile", Toast.LENGTH_SHORT).show();
-//        }
-//        //String match= SELECT  FROM ;
-//        else if(!(helper.isUnique(currentName))&& !(currentName.equals(oldName)))
-//        {
-//            Toast.makeText(this, "This Profile Name already Exists", Toast.LENGTH_SHORT).show();
-//
-//        }
-//        else{
-//            Intent myIntent=new Intent(this,EditWIFI.class);
-//
-//            //Pass all info to next activity
-//            myIntent.putExtra("NAME_TXT_VAL", et.getText().toString());
-//            myIntent.putExtra("WIFI", getIntent().getStringExtra("PROFILE_WIFI"));
-//            myIntent.putExtra("RINGTONE", Integer.toString(ring.getProgress()));
-//            myIntent.putExtra("MEDIA", Integer.toString(media.getProgress()));
-//            myIntent.putExtra("NOTIFICATIONS", Integer.toString(notif.getProgress()));
-//            myIntent.putExtra("SYSTEM", Integer.toString(sys.getProgress()));
-//            myIntent.putExtra("PROFILE_ID",getIntent().getIntExtra("PROFILE_ID",100));
-//            startActivity(myIntent);
-//        }
-//    }
-
     // Listener class for seekbars
     class SeekListener implements SeekBar.OnSeekBarChangeListener{
 

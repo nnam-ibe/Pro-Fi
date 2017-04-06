@@ -16,7 +16,6 @@ public class CreateProfile extends AppCompatActivity {
     private TextInputEditText profileEditText;
     private SeekBar ring,notif,media,sys;
     private final int MAX_SEEK=15;
-    private Button nextButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +32,6 @@ public class CreateProfile extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
-        nextButton = (Button)findViewById(R.id.next_button);
 
         ring = (SeekBar) findViewById(R.id.ringtone_seekbar);
         notif = (SeekBar) findViewById(R.id.notifications_seekbar);

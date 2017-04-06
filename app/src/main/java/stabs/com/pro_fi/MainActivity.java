@@ -2,7 +2,6 @@ package stabs.com.pro_fi;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,7 +12,6 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,14 +29,12 @@ public class MainActivity extends AppCompatActivity {
      */
     private GoogleApiClient client;
     public static final String TAG="MainActivity";
-    AudioManager myAudioManager;
-    private String oldWifi="";
     private boolean check;
     ArrayList<Profile> list;
-    private Switch myswitch;
     private boolean backPressedToExitOnce = false;
     private Toast toast = null;
     private NetworkService networkService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         mainswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-//                    autoActivate(); TODO: Method removed, replaced with checkConnection()
                     networkService.checkConnection();
 
                     // The toggle is enabled
@@ -97,78 +92,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    TODO: Now done with DBHelper.getProfile(String), searching better with a db.
-//    //return profile containing WIFI Name
-//    public Profile getProfile(String WIFINAME)
-//    {
-//        for(int i=0;i<list.size();i++)
-//        {
-//            if(list.get(i).getWifi().equals(WIFINAME)) return list.get(i);
-//        }
-//        return null;
-//    }
-
-//    TODO: Now done using Receiver
-//    public void autoActivate()
-//    {
-//        NetworkChangeReceiver ncr =  NetworkChangeReceiver.getInstance();
-//        ncr.onReceive(this,new Intent());
-//        SharedPreferences sharedPrefs = getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
-//        check=sharedPrefs.getBoolean("AutomaticSelect", false);
-//
-//        //if (check && ncr.isWifiConnected) {
-//            if (ncr.isConnected()&& check) // if the wifi is connected
-//            {
-//            Profile profile=getProfile(ncr.wifiName); // get the profile
-//                if(profile!=null)
-//                {
-////                    if(!(profile.getName().equals(oldWifi)))
-////                    {
-//                    activateProfile(profile,true);
-//                    oldWifi=profile.getName(); //
-//                    String message= "nothing";
-//                    message = profile.getName();
-//                    Log.e(TAG, "FOUND "+message);
-//                    Toast.makeText(this, message + " Activated", Toast.LENGTH_SHORT).show();
-//                    //}
-//                }
-//            }
-//        else{
-//        Log.e(TAG, "NOT FOUND ");}
-//
-//    }
-
-//    TODO: Moved to NetworkService, to make it independent from any Activity
-//    public void activateProfile(Profile profile, boolean Vib)
-//    {
-//        // Boolean Vib is for vibration
-//        //TODO implement option for vibrate and silent
-//        int RING =profile.getRingtone();
-//        int NOTIF=profile.getNotification();
-//        int SYS  =profile.getSystem();
-//        int MEDIA=profile.getMedia();
-//
-//
-//
-//        myAudioManager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
-//        // myAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-//        myAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, MEDIA, 0);
-//        myAudioManager.setStreamVolume(AudioManager.STREAM_RING,RING, 0);
-//        myAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION,NOTIF, 0);
-//        myAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,SYS, 0);
-//
-//
-//
-//       // Log.e(TAG, "VALUES " + MEDIA +" "+ RING +" "+ NOTIF+" " + SYS);
-//
-//
-//
-//    }
-    @Override
-    public void onResume(){
-        super.onResume();
-//        autoActivate(); TODO: Method removed
-    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
@@ -178,9 +101,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(myIntent);
     }
 
-    public void refreshConnection(View view) {
-        //Something
-    }
     @Override
     public void onBackPressed() {
         if (backPressedToExitOnce) {
@@ -227,14 +147,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         killToast();
         super.onPause();
-//        pref=PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//        editor=pref.edit();
-//        editor.putInt("itempos", pos);
-//        editor.putBoolean("boolvalue", list.isItemChecked(pos));
-//        editor.commit();
-        //  Toast.makeText(getApplicationContext(), "PAUSE", 50).show();
-
     }
+
     @Override
     public void onStart() {
         super.onStart();

@@ -28,7 +28,6 @@ public class EditWIFI extends AppCompatActivity{
     WifiManager wifi;
     List<WifiConfiguration> wifis;
     List<String> names=new ArrayList<String>(); // NAMES OF WIFI
-    List<String> scannedNetworks=new ArrayList<String>(); //
     RecyclerView recyclerView;
     Profile profile;
     int activeIndex;
@@ -56,7 +55,7 @@ public class EditWIFI extends AppCompatActivity{
                 getIntent().getIntExtra(Profile.NOTIFICATION, 0),
                 getIntent().getIntExtra(Profile.SYSTEM, 0));
 
-        wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifis = wifi.getConfiguredNetworks();
         WifiConfiguration [] array = new WifiConfiguration[wifis.size()];
         wifis.toArray(array);

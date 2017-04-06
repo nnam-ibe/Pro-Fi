@@ -32,9 +32,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     private NetworkService networkService;
     private SharedPreferences sharedPrefs;
     private Context context;
-    boolean []fade;
     public ArrayList<Profile> profileNames;
-    boolean check;
 
     public ProfileAdapter(ArrayList<Profile> list, Context context)
     {
@@ -87,10 +85,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             super(v);
             this.v=v;
             int size=profileNames.size();
-            fade= new boolean[size];
-           // for(int i=0;i<size;i++){fade[i]=false;}
             textView = (TextView)v.findViewById(R.id.name_text_view);
-             button1 = (Button)v.findViewById(R.id.button);
+            button1 = (Button)v.findViewById(R.id.button);
 
         }
     }
@@ -100,24 +96,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.profile_card, parent, false);
         return new ViewHolder(v);
-    }
-    public int checkSelect()
-    {
-        for(int j=0;j<fade.length;j++)
-        {
-            if(fade[j]) return j;
-        }
-        return -1;
-    }
-    public void select(Profile profileName,View v,int pos)
-    {Toast.makeText(v.getContext(), profileName.getName() + " Selected", Toast.LENGTH_SHORT).show();
-        v.setAlpha((float) .65);
-        fade[pos] = true;}
-    public void deSelect(Profile profileName,View v,int pos)
-    {
-        Toast.makeText(v.getContext(), profileName.getName() + " Deselected", Toast.LENGTH_SHORT).show();
-        v.setAlpha((float) 1);
-        fade[pos]=false;
     }
 
     @Override
@@ -165,11 +143,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                         } else if (item.getTitle().equals("Edit")) {
                             edit_Profile(v, position);
                         }
-//                            Toast.makeText(
-//                                    v.getContext(),
-//                                    "You Clicked : " + item.getTitle(),
-//                                    Toast.LENGTH_SHORT
-//                            ).show();
                         return true;
                     }
                 });

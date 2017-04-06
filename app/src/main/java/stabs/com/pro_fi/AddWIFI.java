@@ -25,8 +25,6 @@ public class AddWIFI extends AppCompatActivity {
     WifiManager wifi;
     List<WifiConfiguration> wifis;
     List<String> names=new ArrayList <String>(); // NAMES OF WIFI
-    List<String> scannedNetworks=new ArrayList<String>(); //
-    String[] profileInfo = new String[6]; // ALL PROFILE DETAILS AND SETTINGS
     RecyclerView recyclerView;
     Profile profile;
 

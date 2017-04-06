@@ -41,26 +41,6 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         } else {
             Log.e(TAG, "In Manual Mode");
         }
-
-
-//        TODO: Moved connection logic to NetworkService.
-//        ConnectivityManager connec = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo wifi = connec.getActiveNetworkInfo();
-//        if (wifi != null && wifi.isConnected() && wifi.getType() == ConnectivityManager.TYPE_WIFI) {
-//            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-//            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-//            if (connectionInfo != null && !(connectionInfo.getSSID().equals(""))) {
-//                wifiName=connectionInfo.getSSID().replace("\"", "");
-//                Log.e(TAG, "We are Connected to " + wifiName);
-//            }
-//
-//            isWifiConnected = true;
-//            NetworkService networkService = new NetworkService(context);
-//            networkService.activateProfile(wifiName);
-//        } else {
-//            Log.e(TAG, "No WiFi connection");
-//            isWifiConnected = false;
-//        }
     }
 
 }
