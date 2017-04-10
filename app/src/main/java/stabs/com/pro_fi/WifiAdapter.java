@@ -9,20 +9,15 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Created by ethan on 2016-12-18.
- */
-
-/**
  * Adapter to manage the recycler view.
  */
 public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
-    private ArrayList<String> profileNames;
-    private int activeIndex;
+    private ArrayList<String> wifiNames;
+    private boolean[] selectedWifis;
 
-    public WifiAdapter(ArrayList<String> list)
-    {
-        profileNames = list;
-        activeIndex = -1;
+    public WifiAdapter(ArrayList<String> list) {
+        wifiNames = list;
+        selectedWifis = new boolean[list.size()];
     }
 
     @Override
@@ -33,19 +28,16 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(final WifiAdapter.ViewHolder holder, final int position) {
-        final String profileName = profileNames.get(position);
+    public void onBindViewHolder(final WifiAdapter.ViewHolder holder, int position) {
+        final String profileName = wifiNames.get(position);
         holder.wifiCard.setText(profileName);
-        holder.itemView.setActivated(activeIndex == position);
+        holder.itemView.setActivated(selectedWifis[position]);
         holder.v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        v.setActivated(true);
+                        v.setActivated(!selectedWifis[holder.getAdapterPosition()]);
                         WifiAdapter.this.notifyItemChanged(holder.getAdapterPosition());
-                        if (activeIndex != -1) {
-                            WifiAdapter.this.notifyItemChanged(activeIndex);
-                        }
-                        activeIndex = holder.getAdapterPosition();
+                        selectedWifis[holder.getAdapterPosition()] = !selectedWifis[holder.getAdapterPosition()];
                     }
                 }
         );
@@ -53,15 +45,21 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return profileNames.size();
+        return wifiNames.size();
     }
 
-    public String getWifiName() {
-        return profileNames.get(activeIndex);
+    public ArrayList<String> getSelectedWifis() {
+        ArrayList<String> result = new ArrayList<>();
+        for (int i=0; i<selectedWifis.length; i++) {
+            if (selectedWifis[i]) {
+                result.add(wifiNames.get(i));
+            }
+        }
+        return result;
     }
 
-    public void setActiveIndex(int activeIndex) {
-        this.activeIndex = activeIndex;
+    public void setSelectedWifis(boolean[] b) {
+        this.selectedWifis = b;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

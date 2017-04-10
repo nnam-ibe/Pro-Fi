@@ -15,6 +15,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private TextInputLayout profileLayout;
     private TextInputEditText profileEditText;
 
+    private Profile profile;
     private int profileId;
     private SeekBar ring,notif,media,sys;
     final int MAX_SEEK=15;
@@ -43,20 +44,14 @@ public class EditProfileActivity extends AppCompatActivity {
         //Show all profile Settings
         //Show profile name
         profileId = getIntent().getIntExtra(Profile.ID, -1);
-        String name = getIntent().getStringExtra(Profile.NAME);
-        profileEditText.setText(name);
 
-        //Show ringtone setting
-        ring.setProgress(getIntent().getIntExtra(Profile.RINGTONE, 0));
+        profile = DBHelper.getInstance(this).getProfile(profileId);
 
-        //Show media setting
-        media.setProgress(getIntent().getIntExtra(Profile.MEDIA, 0));
-
-        //Show notifications setting
-        notif.setProgress(getIntent().getIntExtra(Profile.NOTIFICATION, 0));
-
-        //Show system setting
-        sys.setProgress(getIntent().getIntExtra(Profile.SYSTEM, 0));
+        profileEditText.setText(profile.getName());
+        ring.setProgress(profile.getRingtone());
+        media.setProgress(profile.getMedia());
+        notif.setProgress(profile.getNotification());
+        sys.setProgress(profile.getSystem());
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,24 +79,20 @@ public class EditProfileActivity extends AppCompatActivity {
 
     public void next(View v){
         DBHelper helper = DBHelper.getInstance(this);
-        String oldName = getIntent().getStringExtra(Profile.NAME);
-        String oldWifi = getIntent().getStringExtra(Profile.WIFI);
 
         //Display toast if name is not entered
         String name = profileEditText.getText().toString().trim();
         if (name.isEmpty()) {
             profileLayout.setError(getString(R.string.enter_a_name));
             profileEditText.requestFocus();
-        } else if(!helper.isUnique(DBHelper.PROFILE_NAME, name, oldName)) {
+        } else if(!helper.isUnique(DBHelper.PROFILE_NAME, name, profile.getId())) {
             profileLayout.setError(getString(R.string.name_exists_errr));
             profileEditText.requestFocus();
         } else {
             Intent myIntent = new Intent(this,EditWIFI.class);
 
-            //Pass all info
             myIntent.putExtra(Profile.ID, profileId);
             myIntent.putExtra(Profile.NAME, name);
-            myIntent.putExtra(Profile.WIFI, oldWifi);
             myIntent.putExtra(Profile.RINGTONE, ring.getProgress());
             myIntent.putExtra(Profile.MEDIA, media.getProgress());
             myIntent.putExtra(Profile.NOTIFICATION, notif.getProgress());

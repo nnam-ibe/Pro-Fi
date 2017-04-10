@@ -45,7 +45,7 @@ public class AddWIFI extends AppCompatActivity {
 
         profile = new Profile(
                 getIntent().getStringExtra(Profile.NAME),
-                "",
+                null,
                 getIntent().getIntExtra(Profile.RINGTONE, 0),
                 getIntent().getIntExtra(Profile.MEDIA, 0),
                 getIntent().getIntExtra(Profile.NOTIFICATION, 0),
@@ -82,16 +82,22 @@ public class AddWIFI extends AppCompatActivity {
     }
 
     public void saveProfile(View v){
-        profile.setWifi(wifiAdapter.getWifiName());
         DBHelper helper= DBHelper.getInstance(this);
 
-        if ( profile.getWifi() == null ) {
+        if ( wifiAdapter.getSelectedWifis() == null ) {
             Toast.makeText(this, "Select a Wi-Fi", Toast.LENGTH_SHORT).show();
-        } else if(!helper.isUnique(DBHelper.WIFI_NAME, profile.getWifi())) {
+        }
+
+        boolean isUnique = true;
+        for (String wifiName:wifiAdapter.getSelectedWifis()) {
+            isUnique &= helper.isUnique(DBHelper.WIFI_NAME, wifiName, -1);
+        }
+
+        if(!isUnique) {
             Toast.makeText(this, "Wi-Fi already in use", Toast.LENGTH_SHORT).show();
         } else {
             //Write contents profileInfo to DB.
-            helper.insertProfile(profile);
+            helper.insertProfile(profile, wifiAdapter.getSelectedWifis());
 
             //Switch to Home screen
             Intent myIntent=new Intent(this,MainActivity.class);
