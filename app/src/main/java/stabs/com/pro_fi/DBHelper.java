@@ -115,9 +115,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String[] whereArgs =  new String[]{profile.getId() + ""};
         int rowsAffected = db.update(PROFILE_TABLE, values, PROFILE_ID + " =?", whereArgs);
 
-        String rawQuery = "DELETE FROM " + WIFI_TABLE + " WHERE " + PROFILE_ID
-                + "=" + profile.getId();
-        db.execSQL(rawQuery);
+        db.delete(WIFI_TABLE, PROFILE_ID + "=?", new String[]{String.valueOf(profile.getId())});
 
         for (String wifiName : wifiList) {
             ContentValues wifiValues = new ContentValues();
@@ -129,12 +127,10 @@ public class DBHelper extends SQLiteOpenHelper {
         return rowsAffected >0;
     }
 
-    // TODO: Revisit deleting profiles with new schema
-    public void deleteProfile(Profile profile)
-    {
+    public void deleteProfile(Profile profile) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(PROFILE_TABLE, PROFILE_ID + " = ?",
-                new String[] { String.valueOf(profile.getId()) });
+        db.delete(PROFILE_TABLE, PROFILE_ID + "=?", new String[] {String.valueOf(profile.getId())});
+        db.delete(WIFI_TABLE, PROFILE_ID + "=?", new String[]{String.valueOf(profile.getId())});
         db.close();
 
     }
