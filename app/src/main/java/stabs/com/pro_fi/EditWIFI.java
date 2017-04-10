@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -30,7 +29,6 @@ public class EditWIFI extends AppCompatActivity{
     List<String> names=new ArrayList<String>(); // NAMES OF WIFI
     RecyclerView recyclerView;
     Profile profile;
-    int activeIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,35 +45,34 @@ public class EditWIFI extends AppCompatActivity{
             }
         });
 
-        profile = new Profile(getIntent().getIntExtra(Profile.ID, -1),
-                getIntent().getStringExtra(Profile.NAME),
-                getIntent().getStringExtra(Profile.WIFI),
-                getIntent().getIntExtra(Profile.RINGTONE, 0),
-                getIntent().getIntExtra(Profile.MEDIA, 0),
-                getIntent().getIntExtra(Profile.NOTIFICATION, 0),
-                getIntent().getIntExtra(Profile.SYSTEM, 0));
+        int profileId = getIntent().getIntExtra(Profile.ID, -1);
+        DBHelper dbHelper = DBHelper.getInstance(this);
+        profile = dbHelper.getProfile(profileId);
 
         wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifis = wifi.getConfiguredNetworks();
         WifiConfiguration [] array = new WifiConfiguration[wifis.size()];
         wifis.toArray(array);
 
-        for(int i=0;i<wifis.size();i++)
-        {
+        for(int i=0;i<wifis.size();i++) {
             names.add(array[i].SSID.replace("\"", ""));
         }
         Collections.sort(names);
 
-        String oldWIFI = getIntent().getStringExtra(Profile.WIFI);
-        activeIndex = names.indexOf(oldWIFI);
-        Log.d(TAG, "Active Index: " + activeIndex + "; " + oldWIFI);
+        ArrayList<String> selectedWifiNames = dbHelper.getProfileWifiList(profileId);
+        boolean[] selectedWifis = new boolean[names.size()];
+        for(String wifi: selectedWifiNames) {
+            int index = names.indexOf(wifi);
+            selectedWifis[index] = true;
+        }
+
 
         if (recyclerView != null) {
             recyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(layoutManager);
             wifiAdapter = new WifiAdapter((ArrayList<String>) names);
-            wifiAdapter.setActiveIndex(activeIndex);
+            wifiAdapter.setSelectedWifis(selectedWifis);
             recyclerView.setAdapter(wifiAdapter);
         }
     }
@@ -91,14 +88,15 @@ public class EditWIFI extends AppCompatActivity{
     }
 
     public void saveProfile(View v){
-        profile.setWifi(wifiAdapter.getWifiName());
-        String oldWIFI = getIntent().getStringExtra(Profile.WIFI);
-        int id = getIntent().getIntExtra(Profile.ID, -1);
         DBHelper helper = DBHelper.getInstance(this);
-        boolean isUnique = helper.isUnique(DBHelper.WIFI_NAME, profile.getWifi(), oldWIFI);
+
+        boolean isUnique = true;
+        for (String wifiName:wifiAdapter.getSelectedWifis()) {
+            isUnique &= helper.isUnique(DBHelper.WIFI_NAME, wifiName, profile.getId());
+        }
 
         if (isUnique) {
-            helper.updateProfile(profile);
+            helper.updateProfile(profile, wifiAdapter.getSelectedWifis());
             Toast.makeText(this, profile.getName() + " updated", Toast.LENGTH_SHORT).show();
 
             //Switch to Home screen

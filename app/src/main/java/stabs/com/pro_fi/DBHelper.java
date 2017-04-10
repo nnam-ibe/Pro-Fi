@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -141,36 +140,26 @@ public class DBHelper extends SQLiteOpenHelper {
      * Checks if a new value for a given column in the database is unique
      * @param column: the column to look up, e.g. PROFILE_NAME
      * @param newValue the unique value to search against
-     * @param oldValue the old value of the column to exclude
+     * @param profileId the id the of the profile
      * @return True if newValue is not present in column (is unique), False otherwise
      */
-    public boolean isUnique(String column, String newValue, String oldValue) {
+    public boolean isUnique(String column, String newValue, int profileId) {
         SQLiteDatabase db = this.getWritableDatabase();
         String tableName = PROFILE_TABLE;
         if (column.equals(WIFI_NAME)) {
             tableName = WIFI_TABLE;
         }
 
-        String query = "SELECT " + column +
+        String query = "SELECT " + PROFILE_ID + "," + column +
                 " FROM " + tableName +
                 " WHERE " + column + " = '" + newValue + "'" +
-                " AND " + column + " != '" + oldValue + "'";
+                " AND " + PROFILE_ID + " != '" + profileId + "'";
 
         Cursor cursor = db.rawQuery(query,null);
         boolean result = cursor.getCount()==0;
         cursor.close();
         return  result;
 
-    }
-
-    /**
-     * Checks if a value is unique for column in the database
-     * @param column the column to look up, e.g. PROFILE_NAME
-     * @param value the unique value to search against
-     * @return True if newValue is not present in column (is unique), False otherwise
-     */
-    public boolean isUnique(String column, String value) {
-        return isUnique(column, value, "");
     }
 
     // TODO Returning null wifi
@@ -216,7 +205,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String rawQuery = "SELECT " + PROFILE_ID + ", " + PROFILE_NAME + ", "  + WIFI_NAME + ", "
                 + PROFILE_RINGTONE + ", " +  PROFILE_MEDIA + ", " + PROFILE_NOTIFICATIONS + ", "
                 + PROFILE_SYSTEM  + " FROM " + PROFILE_TABLE + " OUTER LEFT JOIN " + WIFI_TABLE
-                + " USING (" + PROFILE_ID + ")";
+                + " USING (" + PROFILE_ID + ") WHERE " + WIFI_NAME + "='" + wifiName + "'";
 
         Cursor cursor = db.rawQuery(rawQuery, null);
 
@@ -237,6 +226,31 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Retrieves the names of the wifi networks associated with this profile
+     * @param profileId the id of the profile
+     * @return an Arraylist of all wifis associated with this wifi
+     */
+    public ArrayList<String> getProfileWifiList(int profileId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<String> result = new ArrayList<>();
+
+        String rawQuery = "SELECT " + WIFI_NAME + " FROM " + WIFI_TABLE + " WHERE " + PROFILE_ID
+                + "=" + profileId;
+
+        Cursor cursor = db.rawQuery(rawQuery, null);
+
+        while(cursor!=null && cursor.moveToNext()) {
+            result.add(cursor.getString(cursor.getColumnIndex(WIFI_NAME)));
+        }
+
+        if (cursor!=null) {
+            cursor.close();
+        }
+
+        return result;
+    }
+
+    /**
      * Helper methjod to get a list of all profiles in the database
      * @return An arraylist of all profiles, an empty list if there are no profiles.
      */
@@ -246,7 +260,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<Profile> profiles = new ArrayList<>();
 
         Cursor cursor = db.query(PROFILE_TABLE,
-                new String[]{PROFILE_NAME, PROFILE_RINGTONE, PROFILE_MEDIA, PROFILE_NOTIFICATIONS, PROFILE_SYSTEM},
+                new String[]{PROFILE_ID, PROFILE_NAME, PROFILE_RINGTONE, PROFILE_MEDIA, PROFILE_NOTIFICATIONS, PROFILE_SYSTEM},
                 null, null, null, null, null, null);
 
         while (cursor!=null && cursor.moveToNext()) {

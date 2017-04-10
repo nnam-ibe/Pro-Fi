@@ -69,7 +69,7 @@ public class CreateProfile extends AppCompatActivity {
         if (name.isEmpty()) {
             profileLayout.setError(getString(R.string.enter_a_name));
             profileEditText.requestFocus();
-        } else if(!helper.isUnique(DBHelper.PROFILE_NAME, name)) {
+        } else if(!helper.isUnique(DBHelper.PROFILE_NAME, name, -1)) {
             profileLayout.setError(getString(R.string.name_exists_errr));
             profileEditText.requestFocus();
         } else {

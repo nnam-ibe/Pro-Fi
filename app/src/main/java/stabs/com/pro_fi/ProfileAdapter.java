@@ -156,16 +156,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     //Switch to edit view
     public void edit_Profile(final View view, final int position){
         Intent myIntent = new Intent(view.getContext(), EditProfileActivity.class);
-        DBHelper helper = DBHelper.getInstance(view.getContext());
-        Profile selectedProfile = helper.getProfile(profileNames.get(position).getId());//profile to be displayed
-
-        myIntent.putExtra(Profile.ID, selectedProfile.getId());
-        myIntent.putExtra(Profile.NAME, selectedProfile.getName());
-        myIntent.putExtra(Profile.WIFI, selectedProfile.getWifi());
-        myIntent.putExtra(Profile.RINGTONE, selectedProfile.getRingtone());
-        myIntent.putExtra(Profile.MEDIA, selectedProfile.getMedia());
-        myIntent.putExtra(Profile.NOTIFICATION, selectedProfile.getNotification());
-        myIntent.putExtra(Profile.SYSTEM, selectedProfile.getSystem());
+        myIntent.putExtra(Profile.ID, profileNames.get(position).getId());
 
         view.getContext().startActivity(myIntent);
     }
