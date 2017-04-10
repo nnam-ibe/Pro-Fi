@@ -115,12 +115,15 @@ public class DBHelper extends SQLiteOpenHelper {
         String[] whereArgs =  new String[]{profile.getId() + ""};
         int rowsAffected = db.update(PROFILE_TABLE, values, PROFILE_ID + " =?", whereArgs);
 
+        String rawQuery = "DELETE FROM " + WIFI_TABLE + " WHERE " + PROFILE_ID
+                + "=" + profile.getId();
+        db.execSQL(rawQuery);
+
         for (String wifiName : wifiList) {
             ContentValues wifiValues = new ContentValues();
             wifiValues.put(PROFILE_ID, profile.getId());
             wifiValues.put(WIFI_NAME, wifiName);
-            String[] wifiArgs = new String[]{profile.getId() + ""};
-            db.update(WIFI_TABLE, wifiValues, PROFILE_ID + " =?", wifiArgs);
+            db.insert(WIFI_TABLE, null, wifiValues);
         }
 
         return rowsAffected >0;
@@ -162,7 +165,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    // TODO Returning null wifi
     /**
      * Helper method to retrieve a profile from the db, based on its id
      * @param profileId the id of the profile to get from the db

@@ -35,8 +35,9 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
         holder.v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        v.setActivated(true);
+                        v.setActivated(!selectedWifis[holder.getAdapterPosition()]);
                         WifiAdapter.this.notifyItemChanged(holder.getAdapterPosition());
+                        selectedWifis[holder.getAdapterPosition()] = !selectedWifis[holder.getAdapterPosition()];
                     }
                 }
         );
