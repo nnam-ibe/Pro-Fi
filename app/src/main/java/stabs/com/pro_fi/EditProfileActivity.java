@@ -92,6 +92,11 @@ public class EditProfileActivity extends AppCompatActivity {
             Intent myIntent = new Intent(this,EditWIFI.class);
 
             myIntent.putExtra(Profile.ID, profileId);
+            myIntent.putExtra(Profile.NAME, name);
+            myIntent.putExtra(Profile.RINGTONE, ring.getProgress());
+            myIntent.putExtra(Profile.MEDIA, media.getProgress());
+            myIntent.putExtra(Profile.NOTIFICATION, notif.getProgress());
+            myIntent.putExtra(Profile.SYSTEM, sys.getProgress());
             startActivity(myIntent);
         }
     }

@@ -46,8 +46,13 @@ public class EditWIFI extends AppCompatActivity{
         });
 
         int profileId = getIntent().getIntExtra(Profile.ID, -1);
-        DBHelper dbHelper = DBHelper.getInstance(this);
-        profile = dbHelper.getProfile(profileId);
+        profile = new Profile(getIntent().getIntExtra(Profile.ID, -1),
+                getIntent().getStringExtra(Profile.NAME),
+                null,
+                getIntent().getIntExtra(Profile.RINGTONE, 0),
+                getIntent().getIntExtra(Profile.MEDIA, 0),
+                getIntent().getIntExtra(Profile.NOTIFICATION, 0),
+                getIntent().getIntExtra(Profile.SYSTEM, 0));
 
         wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifis = wifi.getConfiguredNetworks();
@@ -59,7 +64,7 @@ public class EditWIFI extends AppCompatActivity{
         }
         Collections.sort(names);
 
-        ArrayList<String> selectedWifiNames = dbHelper.getProfileWifiList(profileId);
+        ArrayList<String> selectedWifiNames = DBHelper.getInstance(this).getProfileWifiList(profileId);
         boolean[] selectedWifis = new boolean[names.size()];
         for(String wifi: selectedWifiNames) {
             int index = names.indexOf(wifi);
