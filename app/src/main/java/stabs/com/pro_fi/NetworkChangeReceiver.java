@@ -18,12 +18,6 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     public static final String TAG = "NetworkChangeReceiver";
     public String wifiName;
 
-    public static NetworkChangeReceiver getInstance() {
-        if (mInstance == null) {
-            mInstance = new NetworkChangeReceiver();
-        }
-        return mInstance;
-    }
 
     public boolean isConnected(){return isWifiConnected;}
 

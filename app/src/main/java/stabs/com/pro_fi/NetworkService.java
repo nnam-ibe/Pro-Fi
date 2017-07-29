@@ -45,16 +45,17 @@ public class NetworkService {
             Log.w(TAG, "No profile to connect to.");
             return;
         }
-        myAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, profile.getMedia(), 0);
-        myAudioManager.setStreamVolume(AudioManager.STREAM_RING, profile.getRingtone(), 0);
-        myAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, profile.getNotification(), 0);
-        myAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, profile.getSystem(), 0);
+        if (!myAudioManager.isWiredHeadsetOn()) {
+            myAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, profile.getMedia(), 0);
+            myAudioManager.setStreamVolume(AudioManager.STREAM_RING, profile.getRingtone(), 0);
+            myAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, profile.getNotification(), 0);
+            myAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, profile.getSystem(), 0);
 
-        SharedPreferences.Editor editor = context.getSharedPreferences("com.profi.xyz", MODE_PRIVATE).edit();
-        editor.putInt(ACTIVE_PROFILE, profile.getId());
-        editor.apply();
+            SharedPreferences.Editor editor = context.getSharedPreferences("com.profi.xyz", MODE_PRIVATE).edit();
+            editor.putInt(ACTIVE_PROFILE, profile.getId());
+            editor.apply();
+        }
     }
-
     /**
      * Checks if there are any Profiles to connect to after a change in network state
      * or mode (Automatic, Manual)

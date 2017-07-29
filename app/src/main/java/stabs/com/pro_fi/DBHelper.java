@@ -207,8 +207,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery(rawQuery, null);
 
-        if (cursor!=null) {
-            cursor.moveToNext();
+        if (cursor!=null && cursor.moveToNext()) {
+
             Profile profile = new Profile(
                     cursor.getInt(cursor.getColumnIndex(PROFILE_ID)),
                     cursor.getString(cursor.getColumnIndex(PROFILE_NAME)),

@@ -1,6 +1,7 @@
 package stabs.com.pro_fi;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean backPressedToExitOnce = false;
     private Toast toast = null;
     private NetworkService networkService;
+    private AudioReceiver audioReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
         list = DBHelper.getInstance(this).getAllProfiles();
         check=false;
         networkService = new NetworkService(this);
+        audioReceiver = new AudioReceiver();
+
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         if (recyclerView != null)
@@ -100,6 +104,12 @@ public class MainActivity extends AppCompatActivity {
         Intent myIntent=new Intent(this,CreateProfile.class);
         startActivity(myIntent);
     }
+    @Override public void onResume() {
+        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        registerReceiver(audioReceiver, filter);
+        super.onResume();
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -146,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         killToast();
+        unregisterReceiver(audioReceiver);
         super.onPause();
     }
 
