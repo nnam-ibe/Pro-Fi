@@ -51,9 +51,9 @@ public class AddWIFI extends AppCompatActivity {
                 getIntent().getIntExtra(Profile.NOTIFICATION, 0),
                 getIntent().getIntExtra(Profile.SYSTEM, 0));
 
-        wifi=(WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        wifis=wifi.getConfiguredNetworks();
-        WifiConfiguration [] array= new WifiConfiguration[wifis.size()];
+        wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifis = wifi.getConfiguredNetworks();
+        WifiConfiguration [] array = new WifiConfiguration[wifis.size()];
         wifis.toArray(array);
 
         for(int i=0;i<wifis.size();i++)

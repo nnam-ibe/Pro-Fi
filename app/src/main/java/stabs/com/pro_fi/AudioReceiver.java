@@ -14,25 +14,28 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class AudioReceiver extends BroadcastReceiver {
     public static final String TAG ="AudioReceiver";
-    private NetworkService networkService;
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        networkService=new NetworkService(context);
+        NetworkService networkService = new NetworkService(context);
+
         if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
             int state = intent.getIntExtra("state", -1);
+
             switch (state) {
                 case 0:
                     Log.d(TAG, "Headset is unplugged");
+                    Log.w(TAG, "Attempting to stop service...");
+                    Intent serviceIntent = new Intent(context, AudioService.class);
+                    context.stopService(serviceIntent);
+                    Log.w(TAG, "Service stopped");
                     SharedPreferences sharedPrefs = context.getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
                     boolean isAutomatic = sharedPrefs.getBoolean("AutomaticSelect", false);
+
                     // If in manual mode, nothing to do here, return.
-                    if (isAutomatic)
-                    {
+                    if (isAutomatic) {
                         networkService.checkConnection();
                     }
-
                     break;
                 case 1:
                     Log.d(TAG, "Headset is plugged");
@@ -44,4 +47,4 @@ public class AudioReceiver extends BroadcastReceiver {
     }
 
 
-    }
+}

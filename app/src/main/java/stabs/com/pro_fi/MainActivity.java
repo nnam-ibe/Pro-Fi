@@ -1,7 +1,6 @@
 package stabs.com.pro_fi;
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean backPressedToExitOnce = false;
     private Toast toast = null;
     private NetworkService networkService;
-    private AudioReceiver audioReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
         list = DBHelper.getInstance(this).getAllProfiles();
         check=false;
         networkService = new NetworkService(this);
-        audioReceiver = new AudioReceiver();
 
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -100,16 +97,16 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
+
     public void add_method(View v){
         Intent myIntent=new Intent(this,CreateProfile.class);
         startActivity(myIntent);
     }
-    @Override public void onResume() {
-        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
-        registerReceiver(audioReceiver, filter);
+
+    @Override
+    public void onResume() {
         super.onResume();
     }
-
 
     @Override
     public void onBackPressed() {
@@ -131,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
     private void showToast(String message) {
         if (this.toast == null) {
             // Create toast if found null, it would he the case of first call only
@@ -148,15 +146,16 @@ public class MainActivity extends AppCompatActivity {
         // Showing toast finally
         this.toast.show();
     }
+
     private void killToast() {
         if (this.toast!= null) {
             this.toast.cancel();
         }
     }
+
     @Override
     protected void onPause() {
         killToast();
-        unregisterReceiver(audioReceiver);
         super.onPause();
     }
 

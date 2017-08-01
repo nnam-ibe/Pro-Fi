@@ -1,6 +1,7 @@
 package stabs.com.pro_fi;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
@@ -45,6 +46,7 @@ public class NetworkService {
             Log.w(TAG, "No profile to connect to.");
             return;
         }
+
         if (!myAudioManager.isWiredHeadsetOn()) {
             myAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, profile.getMedia(), 0);
             myAudioManager.setStreamVolume(AudioManager.STREAM_RING, profile.getRingtone(), 0);
@@ -54,6 +56,9 @@ public class NetworkService {
             SharedPreferences.Editor editor = context.getSharedPreferences("com.profi.xyz", MODE_PRIVATE).edit();
             editor.putInt(ACTIVE_PROFILE, profile.getId());
             editor.apply();
+        } else {
+            Intent intent = new Intent(context, AudioService.class);
+            context.startService(intent);
         }
     }
     /**
