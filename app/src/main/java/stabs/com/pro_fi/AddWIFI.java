@@ -53,22 +53,25 @@ public class AddWIFI extends AppCompatActivity {
 
         wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifis = wifi.getConfiguredNetworks();
-        WifiConfiguration [] array = new WifiConfiguration[wifis.size()];
-        wifis.toArray(array);
+//        if(wifis!=null) {
+            WifiConfiguration[] array = new WifiConfiguration[wifis.size()];
+            wifis.toArray(array);
 
-        for(int i=0;i<wifis.size();i++)
-        {
-            names.add(array[i].SSID.replace("\"", ""));
-        }
-        Collections.sort(names);
+            for (int i = 0; i < wifis.size(); i++) {
+                names.add(array[i].SSID.replace("\"", ""));
+            }
+            Collections.sort(names);
 
-        if (recyclerView != null) {
-            recyclerView.setHasFixedSize(true);
-            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-            recyclerView.setLayoutManager(layoutManager);
-            wifiAdapter = new WifiAdapter((ArrayList<String>) names);
-            recyclerView.setAdapter(wifiAdapter);
-        }
+            if (recyclerView != null) {
+                recyclerView.setHasFixedSize(true);
+                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+                recyclerView.setLayoutManager(layoutManager);
+                wifiAdapter = new WifiAdapter((ArrayList<String>) names);
+                recyclerView.setAdapter(wifiAdapter);
+            }
+
+//        }
+
     }
 
     @Override
