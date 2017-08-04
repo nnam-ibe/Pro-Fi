@@ -2,6 +2,7 @@ package stabs.com.pro_fi;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -103,8 +104,15 @@ public class EditWIFI extends AppCompatActivity{
         if (isUnique) {
             helper.updateProfile(profile, wifiAdapter.getSelectedWifis());
             Toast.makeText(this, profile.getName() + " updated", Toast.LENGTH_SHORT).show();
+            SharedPreferences sharedPrefs = this.getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
+            boolean isAutomatic = sharedPrefs.getBoolean("AutomaticSelect", false);
 
-            //Switch to Home screen
+            // Activate New Profile, Ask if they want profile active??
+            if (isAutomatic) {
+                NetworkService networkService = new NetworkService(this);
+                networkService.checkConnection();
+            }
+            //Switch to Home screenc
             Intent myIntent=new Intent(this,MainActivity.class);
             startActivity(myIntent);
         } else {
