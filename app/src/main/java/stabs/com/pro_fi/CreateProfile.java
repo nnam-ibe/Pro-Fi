@@ -88,20 +88,20 @@ public class CreateProfile extends AppCompatActivity {
         }
         else if(!wifiEnabled)
         {
-            new AlertDialog.Builder(getApplicationContext())
-                    .setMessage("Allow Pro-Fi to turn on WIFI?")
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            //Turn on WIFI
-                            wifiManager.setWifiEnabled(true);
-                            next(v);
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // do nothing
-                        }
-                    })
+            new AlertDialog.Builder(this)
+                    .setMessage("Please Turn on WIFI")
+//                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            //Turn on WIFI
+//                            //wifiManager.setWifiEnabled(true);
+//                            next(v);
+//                        }
+//                    })
+//                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            // do nothing
+//                        }
+//                    })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
