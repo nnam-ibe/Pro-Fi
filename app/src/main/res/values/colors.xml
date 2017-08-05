@@ -5,6 +5,7 @@
     <color name="colorAccent">#008080</color>
     <color name="white">#ffffff</color>
     <color name="disabledColor">#C1C1C1</color>
+    <color name="dialogTextColot">#424242</color>
     <color name="teal">#008080</color>
     <color name="teal_light">#00cece</color>
 </resources>

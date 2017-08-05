@@ -16,7 +16,7 @@
 
     <style name="AlertDialogCustom" parent="@android:style/Theme.Material.Light.Dialog.NoActionBar.MinWidth">
         <item name="android:colorAccent">@color/colorPrimary</item>
-        <item name="android:textColorPrimary">@color/disabledColor</item>
+        <item name="android:textColorPrimary">@color/dialogTextColot</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
