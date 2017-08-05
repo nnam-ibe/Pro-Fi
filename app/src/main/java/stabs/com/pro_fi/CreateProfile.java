@@ -1,9 +1,14 @@
 package stabs.com.pro_fi;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,12 +21,15 @@ public class CreateProfile extends AppCompatActivity {
     private TextInputEditText profileEditText;
     private SeekBar ring,notif,media,sys;
     private final int MAX_SEEK=15;
-
+    WifiManager wifiManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add0_activity_layout);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
 
         profileLayout = (TextInputLayout)findViewById(R.id.name_layout);
         profileEditText = (TextInputEditText)findViewById(R.id.profile_name);
@@ -61,7 +69,12 @@ public class CreateProfile extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void next(View v){
+
+    public void next(final View v){
+
+
+        boolean wifiEnabled = wifiManager.isWifiEnabled();
+
         DBHelper helper = DBHelper.getInstance(this);
 
         //Display toast if name is not entered
@@ -72,7 +85,28 @@ public class CreateProfile extends AppCompatActivity {
         } else if(!helper.isUnique(DBHelper.PROFILE_NAME, name, -1)) {
             profileLayout.setError(getString(R.string.name_exists_errr));
             profileEditText.requestFocus();
-        } else {
+        }
+        else if(!wifiEnabled)
+        {
+            new AlertDialog.Builder(getApplicationContext())
+                    .setMessage("Allow Pro-Fi to turn on WIFI?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Turn on WIFI
+                            wifiManager.setWifiEnabled(true);
+                            next(v);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+        else
+            {
             Intent myIntent=new Intent(this,AddWIFI.class);
 
             //Pass all info

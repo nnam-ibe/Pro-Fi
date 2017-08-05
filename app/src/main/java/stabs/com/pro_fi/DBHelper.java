@@ -123,7 +123,7 @@ public class DBHelper extends SQLiteOpenHelper {
             wifiValues.put(WIFI_NAME, wifiName);
             db.insert(WIFI_TABLE, null, wifiValues);
         }
-
+        // for debugging purposes
         return rowsAffected >0;
     }
 
