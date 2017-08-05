@@ -32,4 +32,6 @@
     <string name="enter_a_name">Enter a name</string>
     <string name="name_exists_errr">This Profile Name already Exists</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="delete_profile">Delete Profile?</string>
+    <string name="delete">Delete</string>
 </resources>

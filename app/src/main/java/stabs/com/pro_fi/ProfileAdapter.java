@@ -43,9 +43,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 
     public void delete_Diag(final View view, final int position) {
         new AlertDialog.Builder(view.getContext())
-                .setTitle("Delete Profile")
-                .setMessage("Are you sure you want to delete this Profile?")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                .setMessage(context.getString(R.string.delete_profile))
+                .setPositiveButton(context.getString(R.string.delete), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         //delete From database
                         DBHelper helper= DBHelper.getInstance(view.getContext());
@@ -56,11 +55,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                         profileNames.remove(position);
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position, 1); // update position
-
-
                     }
                 })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // do nothing
                     }
