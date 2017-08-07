@@ -48,7 +48,10 @@ public class NetworkService {
         }
 
         if (!myAudioManager.isWiredHeadsetOn()) {
-            myAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, profile.getMedia(), 0);
+            if(!(myAudioManager.isMusicActive()))
+            {
+                myAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, profile.getMedia(), 0);
+            }
 
             if(profile.getRingtone()==0)
             {
