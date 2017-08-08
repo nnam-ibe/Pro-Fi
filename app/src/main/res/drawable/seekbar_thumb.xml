@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="oval">
-            <solid android:color="@color/colorAccent"/>
+            <solid android:color="@drawable/seekbar_thumb_selector"/>
             <size
                 android:width="20dp"
                 android:height="20dp"/>

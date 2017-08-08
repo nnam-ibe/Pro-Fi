@@ -21,6 +21,13 @@ public class EditProfileActivity extends AppCompatActivity {
     final int MAX_SEEK=15;
     float scale=1.4f;
 
+    private static boolean seekbarDisabled;
+    /**
+     * seekbarPrevValues[0] = Notifications seekbar
+     * seekbarPrevValues[1] = System seekbar
+     */
+    private int[] seekbarPrevValues;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +42,7 @@ public class EditProfileActivity extends AppCompatActivity {
         notif = (SeekBar) findViewById(R.id.notifications_seekbar);
         media = (SeekBar) findViewById(R.id.media_seekbar);
         sys = (SeekBar) findViewById(R.id.system_seekbar);
+        seekbarPrevValues = new int[2];
 
         //Show all profile Settings
         //Show profile name
@@ -108,6 +116,21 @@ public class EditProfileActivity extends AppCompatActivity {
         @Override
         public void onProgressChanged(SeekBar seekBar, int val, boolean fromUser){
             s.setProgress(val);
+            if ( (val==0) && (s.getId() == R.id.ringtone_seekbar) ){
+                seekbarPrevValues[0] = notif.getProgress();
+                seekbarPrevValues[1] = sys.getProgress();
+                notif.setProgress(0);
+                notif.setEnabled(false);
+                sys.setProgress(0);
+                sys.setEnabled(false);
+                seekbarDisabled = true;
+            } else if ((s.getId() == R.id.ringtone_seekbar) && seekbarDisabled) {
+                seekbarDisabled = false;
+                notif.setEnabled(true);
+                sys.setEnabled(true);
+                notif.setProgress( seekbarPrevValues[0] );
+                sys.setProgress( seekbarPrevValues[1] );
+            }
         }
 
         @Override

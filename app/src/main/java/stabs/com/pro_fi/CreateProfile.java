@@ -1,9 +1,7 @@
 package stabs.com.pro_fi;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -22,6 +20,14 @@ public class CreateProfile extends AppCompatActivity {
     private SeekBar ring,notif,media,sys;
     private final int MAX_SEEK=15;
     WifiManager wifiManager;
+
+    private static boolean seekbarDisabled;
+    /**
+     * seekbarPrevValues[0] = Notifications seekbar
+     * seekbarPrevValues[1] = System seekbar
+     */
+    private int[] seekbarPrevValues;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,12 +51,13 @@ public class CreateProfile extends AppCompatActivity {
         notif = (SeekBar) findViewById(R.id.notifications_seekbar);
         media = (SeekBar) findViewById(R.id.media_seekbar);
         sys = (SeekBar) findViewById(R.id.system_seekbar);
+        seekbarPrevValues = new int[2];
 
         //Add listeners to seekbars
-        ring.setOnSeekBarChangeListener(new SeekListener(ring));ring.setMax(MAX_SEEK); ring.setProgress(0);
-        media.setOnSeekBarChangeListener(new SeekListener(media)); media.setMax(MAX_SEEK);media.setProgress(0);
-        notif.setOnSeekBarChangeListener(new SeekListener(notif));notif.setMax(MAX_SEEK);notif.setProgress(0);
-        sys.setOnSeekBarChangeListener(new SeekListener(sys));sys.setMax(MAX_SEEK);sys.setProgress(0);
+        ring.setOnSeekBarChangeListener(new SeekListener(ring));ring.setMax(MAX_SEEK);
+        media.setOnSeekBarChangeListener(new SeekListener(media)); media.setMax(MAX_SEEK);
+        notif.setOnSeekBarChangeListener(new SeekListener(notif));notif.setMax(MAX_SEEK);
+        sys.setOnSeekBarChangeListener(new SeekListener(sys));sys.setMax(MAX_SEEK);
     }
 
     @Override
@@ -123,6 +130,21 @@ public class CreateProfile extends AppCompatActivity {
         @Override
         public void onProgressChanged(SeekBar seekBar, int val, boolean fromUser){
             s.setProgress(val);
+            if ( (val==0) && (s.getId() == R.id.ringtone_seekbar) ){
+                seekbarPrevValues[0] = notif.getProgress();
+                seekbarPrevValues[1] = sys.getProgress();
+                notif.setProgress(0);
+                notif.setEnabled(false);
+                sys.setProgress(0);
+                sys.setEnabled(false);
+                seekbarDisabled = true;
+            } else if ((s.getId() == R.id.ringtone_seekbar) && seekbarDisabled) {
+                seekbarDisabled = false;
+                notif.setEnabled(true);
+                sys.setEnabled(true);
+                notif.setProgress( seekbarPrevValues[0] );
+                sys.setProgress( seekbarPrevValues[1] );
+            }
         }
 
         @Override
