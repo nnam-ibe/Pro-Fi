@@ -35,7 +35,6 @@ public class EditProfileActivity extends AppCompatActivity {
         notif = (SeekBar) findViewById(R.id.notifications_seekbar);
         media = (SeekBar) findViewById(R.id.media_seekbar);
         sys = (SeekBar) findViewById(R.id.system_seekbar);
-        SeekBar [] sound={ring,notif,media,sys};
 
         //Show all profile Settings
         //Show profile name

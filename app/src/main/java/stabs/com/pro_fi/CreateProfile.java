@@ -45,7 +45,6 @@ public class CreateProfile extends AppCompatActivity {
         notif = (SeekBar) findViewById(R.id.notifications_seekbar);
         media = (SeekBar) findViewById(R.id.media_seekbar);
         sys = (SeekBar) findViewById(R.id.system_seekbar);
-        SeekBar [] sound={ring,notif,media,sys};
 
         //Add listeners to seekbars
         ring.setOnSeekBarChangeListener(new SeekListener(ring));ring.setMax(MAX_SEEK); ring.setProgress(0);
