@@ -48,19 +48,17 @@ public class NetworkService {
         }
 
         if (!myAudioManager.isWiredHeadsetOn()) {
-            if(!(myAudioManager.isMusicActive()))
-            {
+
+            if ( !myAudioManager.isMusicActive() ) {
                 myAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, profile.getMedia(), 0);
             }
 
-            if(profile.getRingtone()==0)
-            {
+            if (profile.getRingtone() == 0) {
                 myAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-            }
-            else
-            {
+            } else {
                 myAudioManager.setStreamVolume(AudioManager.STREAM_RING, profile.getRingtone(), 0);
             }
+
             myAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, profile.getNotification(), 0);
             myAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, profile.getSystem(), 0);
 

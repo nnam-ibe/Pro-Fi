@@ -1,9 +1,7 @@
 package stabs.com.pro_fi;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -13,16 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 
@@ -30,13 +23,7 @@ import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
 public class MainActivity extends AppCompatActivity {
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
-    public static final String TAG="MainActivity";
-    private boolean check;
+    public static final String TAG = "MainActivity";
     ArrayList<Profile> list;
     private boolean backPressedToExitOnce = false;
     private Toast toast = null;
@@ -55,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         SwitchCompat mainswitch = (SwitchCompat) findViewById(R.id.compatSwitch);
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
         list = DBHelper.getInstance(this).getAllProfiles();
-        check=false;
+        boolean check;
         networkService = new NetworkService(this);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -68,36 +55,21 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setAdapter(mAdapter);
         }
         SharedPreferences sharedPrefs = getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
-         check=sharedPrefs.getBoolean("AutomaticSelect", false);
+        check = sharedPrefs.getBoolean("AutomaticSelect", false);
         mainswitch.setChecked(check);
-        if (check) {
-            // The toggle is enabled
-            switchstatus.setText("Mode:    Automatic");
-        } else {
-            switchstatus.setText("Mode:    Manual");
-            // The toggle is disabled
-        }
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         mainswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     networkService.checkConnection();
-
                     // The toggle is enabled
-                    switchstatus.setText("Mode:    Automatic");
                     SharedPreferences.Editor editor = getSharedPreferences("com.profi.xyz", MODE_PRIVATE).edit();
                     editor.putBoolean("AutomaticSelect", true);
-                    editor.commit();
-
-
+                    editor.apply();
                 } else {
-                    switchstatus.setText("Mode:    Manual");
                     SharedPreferences.Editor editor = getSharedPreferences("com.profi.xyz", MODE_PRIVATE).edit();
                     editor.putBoolean("AutomaticSelect", false);
-                    editor.commit();
+                    editor.apply();
 
                     // The toggle is disabled
                 }
@@ -152,10 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
                                     mFabPrompt.finish();
-
                                     showSwitchPrompt();
-                                } else if (state == MaterialTapTargetPrompt.STATE_DISMISSING) {
-                                    //mFabPrompt = null;
                                 }
                             }
                         })
@@ -179,8 +148,6 @@ public class MainActivity extends AppCompatActivity {
                         new MaterialTapTargetPrompt.PromptStateChangeListener() {
                             @Override
                             public void onPromptStateChanged(MaterialTapTargetPrompt prompt, int state) {
-                                //count++;
-                                //Log.w(TAG, "Count is " + count);
                                 if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
                                     mSwitchPrompt.finish();
                                     SharedPreferences.Editor sEditor =
@@ -188,8 +155,6 @@ public class MainActivity extends AppCompatActivity {
                                     sEditor.putBoolean(MainActivity.COMPLETED_ONBOARDING_PREF_NAME, true);
                                     sEditor.apply();
                                     enableButtons();
-                                } else if (state == MaterialTapTargetPrompt.STATE_DISMISSING) {
-                                    //mFabPrompt = null;
                                 }
                             }
                         })
@@ -220,8 +185,6 @@ public class MainActivity extends AppCompatActivity {
                                             PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
                                     sEditor.putBoolean(MainActivity.COMPLETED_ONBOARDING_FIRST_PROFILE, true);
                                     sEditor.apply();
-                                } else if (state == MaterialTapTargetPrompt.STATE_DISMISSING) {
-                                    //mFabPrompt = null;
                                 }
                             }
                         })
@@ -234,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void add_method(View v){
-        Intent myIntent=new Intent(this,CreateProfile.class);
+        Intent myIntent = new Intent(this,CreateProfile.class);
         startActivity(myIntent);
     }
 
@@ -292,41 +255,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         killToast();
         super.onPause();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW,
-                "Main Page",
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                Uri.parse("android-app://stabs.com.pro_fi/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW,
-                "Main Page",
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                Uri.parse("android-app://stabs.com.pro_fi/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
     }
 }
