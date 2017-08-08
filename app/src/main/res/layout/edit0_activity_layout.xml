@@ -83,7 +83,7 @@
                     android:progress="50"
                     android:progressTint="@color/colorPrimary"
                     android:progressBackgroundTint="#ff0000"
-                    android:background="@drawable/seekbar_background"
+                    android:background="@drawable/seekbar_thumb"
                     android:thumb="@drawable/ic_ringtone"
                     android:thumbOffset="8dp"
                     android:elevation="10dp"
@@ -134,7 +134,7 @@
                     android:progress="50"
                     android:progressTint="@color/colorPrimary"
                     android:progressBackgroundTint="#ff0000"
-                    android:background="@drawable/seekbar_background"
+                    android:background="@drawable/seekbar_thumb"
                     android:thumb="@drawable/ic_media"
                     android:thumbOffset="8dp"
                     android:elevation="10dp"/>
@@ -182,7 +182,7 @@
                     android:progress="50"
                     android:progressTint="@color/colorPrimary"
                     android:progressBackgroundTint="#ff0000"
-                    android:background="@drawable/seekbar_background"
+                    android:background="@drawable/seekbar_thumb"
                     android:thumb="@drawable/ic_notifications"
                     android:thumbOffset="8dp"
                     android:elevation="10dp"/>
@@ -232,7 +232,7 @@
                     android:progress="50"
                     android:progressTint="@color/colorPrimary"
                     android:progressBackgroundTint="#ff0000"
-                    android:background="@drawable/seekbar_background"
+                    android:background="@drawable/seekbar_thumb"
                     android:thumb="@drawable/ic_system"
                     android:thumbOffset="8dp"
                     android:elevation="10dp"/>
