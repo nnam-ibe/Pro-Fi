@@ -46,11 +46,6 @@ public class CreateProfile extends AppCompatActivity {
         media = (SeekBar) findViewById(R.id.media_seekbar);
         sys = (SeekBar) findViewById(R.id.system_seekbar);
         SeekBar [] sound={ring,notif,media,sys};
-        for (SeekBar aSound : sound) {
-            float scale = 1.4f;
-            aSound.setScaleY(scale);
-            aSound.setScaleX(scale);
-        }
 
         //Add listeners to seekbars
         ring.setOnSeekBarChangeListener(new SeekListener(ring));ring.setMax(MAX_SEEK); ring.setProgress(0);
@@ -70,9 +65,7 @@ public class CreateProfile extends AppCompatActivity {
     }
 
 
-    public void next(final View v){
-
-
+    public void next(final View v) {
         boolean wifiEnabled = wifiManager.isWifiEnabled();
 
         DBHelper helper = DBHelper.getInstance(this);
