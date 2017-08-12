@@ -8,12 +8,16 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     MaterialTapTargetPrompt mSelProfilePrompt;
     private static final String COMPLETED_ONBOARDING_PREF_NAME = "Shlack";
     private static final String COMPLETED_ONBOARDING_FIRST_PROFILE = "Shlack2";
+    private static int count = 0; //no profile ever created.
+    private int firstProfile = -1; //position of the first ever profile created.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,10 +85,6 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        /*if (!sharedPreferences.getBoolean(MainActivity.COMPLETED_ONBOARDING_PREF_NAME, false)){
-
-        }*/
-
         // if first launch of the app
         if (!sharedPreferences.getBoolean(MainActivity.COMPLETED_ONBOARDING_PREF_NAME, false)){
             fab.setEnabled(false);
@@ -90,10 +92,11 @@ public class MainActivity extends AppCompatActivity {
             showFabPrompt();
         }
 
-        // if first ever profile created
+        //if first ever profile created
         if (!sharedPreferences.getBoolean(MainActivity.COMPLETED_ONBOARDING_FIRST_PROFILE, false))
-            if (recyclerView.getAdapter().getItemCount() == 1)
-                showSelProfilePrompt();
+            if (recyclerView.getAdapter().getItemCount() == 1) {
+                showSelProfilePrompt(recyclerView);
+            }
 
     }
 
@@ -133,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
     // show main switch prompt
     public void showSwitchPrompt() {
+        Log.i("ID_COMPATSWITCH",""+R.id.compatSwitch);
         if (mSwitchPrompt != null) {
             return;
         }
@@ -162,33 +166,47 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // show how to activate a profile
-    public void showSelProfilePrompt() {
-        if (mSelProfilePrompt != null) {
-            return;
-        }
-        mSelProfilePrompt = new MaterialTapTargetPrompt.Builder(MainActivity.this)
-                .setTarget(findViewById(R.id.recycler_view))
-                .setPrimaryText("Activate a Profile")
-                .setSecondaryText("Hold a profile to activate it.")
-                .setAnimationInterpolator(new FastOutSlowInInterpolator())
-                .setAutoDismiss(false)
-                .setAutoFinish(false)
-                .setCaptureTouchEventOutsidePrompt(true)
-                .setPromptStateChangeListener(
-                        new MaterialTapTargetPrompt.PromptStateChangeListener() {
-                            @Override
-                            public void onPromptStateChanged(MaterialTapTargetPrompt prompt, int state) {
+    public void showSelProfilePrompt(final RecyclerView v) {
 
-                                if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
-                                    mSelProfilePrompt.finish();
-                                    SharedPreferences.Editor sEditor =
-                                            PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
-                                    sEditor.putBoolean(MainActivity.COMPLETED_ONBOARDING_FIRST_PROFILE, true);
-                                    sEditor.apply();
-                                }
-                            }
-                        })
-                .show();
+        //wait till profile card is drawn on v.
+        v.post(new Runnable() {
+            @Override
+            public void run() {
+
+                int firstProfile = ((LinearLayoutManager)v.getLayoutManager()).findFirstVisibleItemPosition();
+                View child = v.getLayoutManager().findViewByPosition(firstProfile);
+                ProfileAdapter.ViewHolder vh = (ProfileAdapter.ViewHolder)v.findViewHolderForItemId(v.getChildItemId(child));
+
+                if (mSelProfilePrompt != null) {
+                    return;
+                }
+                mSelProfilePrompt = new MaterialTapTargetPrompt.Builder(MainActivity.this)
+                        .setTarget(vh.textView)
+                        .setPrimaryText("Activate a Profile")
+                        .setSecondaryText("Hold a profile to activate it.")
+                        .setAnimationInterpolator(new FastOutSlowInInterpolator())
+                        .setAutoDismiss(false)
+                        .setAutoFinish(false)
+                        .setCaptureTouchEventOutsidePrompt(true)
+                        .setPromptStateChangeListener(
+                                new MaterialTapTargetPrompt.PromptStateChangeListener() {
+                                    @Override
+                                    public void onPromptStateChanged(MaterialTapTargetPrompt prompt, int state) {
+
+                                        if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
+                                            mSelProfilePrompt.finish();
+                                            SharedPreferences.Editor sEditor =
+                                                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+                                            sEditor.putBoolean(MainActivity.COMPLETED_ONBOARDING_FIRST_PROFILE, true);
+                                            sEditor.apply();
+                                        } else if (state == MaterialTapTargetPrompt.STATE_DISMISSING) {
+                                            //mFabPrompt = null;
+                                        }
+                                    }
+                                })
+                        .show();
+            }
+        });
     }
 
     @Override
@@ -202,9 +220,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
+    public void onResume() {super.onResume();}
 
     @Override
     public void onBackPressed() {
