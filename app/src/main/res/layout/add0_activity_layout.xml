@@ -28,6 +28,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="textCapSentences"
                     android:textSize="20sp"
+                    android:focusableInTouchMode="true"
                     android:hint="@string/name"/>
             </android.support.design.widget.TextInputLayout>
 
