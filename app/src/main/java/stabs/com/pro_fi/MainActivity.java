@@ -8,17 +8,16 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +50,27 @@ public class MainActivity extends AppCompatActivity {
         list = DBHelper.getInstance(this).getAllProfiles();
         boolean check;
         networkService = new NetworkService(this);
+
+        final Button button = (Button) findViewById(R.id.default_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(v.getContext(), button);
+                popup.getMenuInflater().inflate(R.menu.default_menu, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (item.getTitle().equals("Edit")) {
+                            Intent myIntent = new Intent(MainActivity.this, EditProfileActivity.class);
+                            myIntent.putExtra(Profile.ID, 1);
+                            MainActivity.this.startActivity(myIntent);
+                        }
+                        return true;
+                    }
+                });
+                popup.setGravity(Gravity.RIGHT);
+                popup.show();
+            }
+        });
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         if (recyclerView != null)
