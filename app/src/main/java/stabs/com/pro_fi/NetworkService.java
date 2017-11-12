@@ -27,6 +27,11 @@ public class NetworkService {
         myAudioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
     }
 
+    public void activateProfile(int profileId) {
+        Profile profile = DBHelper.getInstance(context).getProfile(profileId);
+        activateProfile(profile);
+    }
+
     /**
      * Activates the profile with WiFi name wifiName
      * @param wifiName The name of the WiFi
@@ -88,7 +93,7 @@ public class NetworkService {
 
             activateProfile(wifiName);
         } else {
-            Log.e(TAG, "No WiFi connection");
+            activateProfile(1);
         }
     }
 
