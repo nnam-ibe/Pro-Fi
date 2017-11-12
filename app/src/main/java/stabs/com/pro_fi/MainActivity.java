@@ -39,16 +39,19 @@ public class MainActivity extends AppCompatActivity {
     private static final String COMPLETED_ONBOARDING_FIRST_PROFILE = "Shlack2";
     RecyclerView.Adapter mAdapter;
     private SharedPreferences sharedPrefs;
+    private static MainActivity mInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mInstance = this;
+
         SwitchCompat mainswitch = (SwitchCompat) findViewById(R.id.compatSwitch);
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
         list = DBHelper.getInstance(this).getAllProfiles();
-        boolean check;
         networkService = new NetworkService(this);
+        boolean check;
 
         View defaultProfileCard = findViewById(R.id.default_profile);
         defaultProfileCard.setOnLongClickListener(new View.OnLongClickListener() {
@@ -56,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onLongClick(View v) {
                 networkService.activateProfile(1);
                 Toast.makeText(v.getContext(), "Default Profile Activated", Toast.LENGTH_SHORT).show();
+                highlightActiveProfile();
                 return true;
             }
         });
@@ -259,11 +263,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void highlightActiveProfile() {
         int activeProfile = sharedPrefs.getInt(NetworkService.ACTIVE_PROFILE, -1);
+        View defaultProfileCard = findViewById(R.id.default_profile);
         if ( activeProfile == 1 ) {
-            View defaultProfileCard = findViewById(R.id.default_profile);
             defaultProfileCard.setActivated(true);
-        } else {
             mAdapter.notifyDataSetChanged();
+        } else {
+            defaultProfileCard.setActivated(false);
         }
     }
 
@@ -316,5 +321,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         killToast();
         super.onPause();
+    }
+
+    public static MainActivity getInstance() {
+        return mInstance;
     }
 }
