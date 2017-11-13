@@ -1,7 +1,9 @@
 package stabs.com.pro_fi;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String COMPLETED_ONBOARDING_FIRST_PROFILE = "Shlack2";
     private static int count = 0; //no profile ever created.
     private int firstProfile = -1; //position of the first ever profile created.
+    WifiManager wifiManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,6 +219,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void add_method(View v){
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.startScan();
         Intent myIntent = new Intent(this,CreateProfile.class);
         startActivity(myIntent);
     }

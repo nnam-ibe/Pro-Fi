@@ -1,14 +1,24 @@
 package stabs.com.pro_fi;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.util.Pair;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +26,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.jar.Manifest;
 
 public class AddWIFI extends AppCompatActivity {
 
@@ -24,10 +36,74 @@ public class AddWIFI extends AppCompatActivity {
 
     private WifiAdapter wifiAdapter;
     WifiManager wifi;
-    List<WifiConfiguration> wifis;
+    List<WifiConfiguration> configuredWifis;
+    List<ScanResult> wifis, conf_wifis;
     List<String> names=new ArrayList <String>(); // NAMES OF WIFI
     RecyclerView recyclerView;
     Profile profile;
+    final int REQUEST_PERMISSION_FINE_LOCATION = 1;
+    BroadcastReceiver receiver;
+
+
+    private class WifiReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i(TAG, "onReceive: entered receive *************");
+
+            // Get scan result.
+            wifis = wifi.getScanResults();
+
+            // Check if any pre configured network is in scan result.
+            if (wifis.size() > 0 && configuredWifis != null) {
+
+                conf_wifis = new ArrayList<ScanResult>();
+
+                for (WifiConfiguration e : configuredWifis) {
+                    String e_SSID = e.SSID.replace("\"", "");
+                    for (ScanResult result : wifis) {
+
+                        // If match found,
+                        if (e_SSID.equals(result.SSID)) {
+
+                            // Add to conf_wifis if not already in conf_wifi.
+                            if (!conf_wifis.contains(result)) {
+
+                                conf_wifis.add(result);
+                            }
+                        }
+                    }
+                }
+
+                // Add other network names to names.
+                for (WifiConfiguration w : configuredWifis) {
+                    if (!in(w, conf_wifis)) {
+                        names.add(w.SSID.replace("\"", ""));
+                    }
+                }
+
+                //Sort scan result by signal strength.
+                Collections.sort(conf_wifis, new Comparator<ScanResult>(){
+                    @Override
+                    public int compare(ScanResult res1, ScanResult res2) {
+                        if (res1.level < res2.level) { return -1; }
+                        else if (res1.level > res2.level) { return 1; }
+                        else { return  0; }
+                    }
+                });
+
+                // Add sorted result names to top of names.
+                for (int i = conf_wifis.size()-1; i >= 0; --i) {
+                    String ssid = conf_wifis.get(i).SSID;
+                    if (!names.contains(ssid)) {
+                        names.add(0, ssid);
+                    }
+                }
+
+            }
+        }
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,26 +128,24 @@ public class AddWIFI extends AppCompatActivity {
                 getIntent().getIntExtra(Profile.NOTIFICATION, 0),
                 getIntent().getIntExtra(Profile.SYSTEM, 0));
 
+
         wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        wifis = wifi.getConfiguredNetworks();
-//        if(wifis!=null) {
-            WifiConfiguration[] array = new WifiConfiguration[wifis.size()];
-            wifis.toArray(array);
+        configuredWifis = wifi.getConfiguredNetworks();
 
-            for (int i = 0; i < wifis.size(); i++) {
-                names.add(array[i].SSID.replace("\"", ""));
-            }
-            Collections.sort(names);
+        // Create and register receiver for wifi.startScan().
+        receiver = new WifiReceiver();
+        receiver.onReceive(this, getIntent());
 
-            if (recyclerView != null) {
-                recyclerView.setHasFixedSize(true);
-                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-                recyclerView.setLayoutManager(layoutManager);
-                wifiAdapter = new WifiAdapter((ArrayList<String>) names);
-                recyclerView.setAdapter(wifiAdapter);
-            }
+        registerReceiver(receiver, new IntentFilter(wifi.SCAN_RESULTS_AVAILABLE_ACTION));
 
-//        }
+        // Populate recyclerview.
+        if (recyclerView != null) {
+            recyclerView.setHasFixedSize(true);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(layoutManager);
+            wifiAdapter = new WifiAdapter((ArrayList<String>) names);
+            recyclerView.setAdapter(wifiAdapter);
+        }
 
     }
 
@@ -115,5 +189,25 @@ public class AddWIFI extends AppCompatActivity {
             Intent myIntent=new Intent(this,MainActivity.class);
             startActivity(myIntent);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Unregister receiver.
+        unregisterReceiver(receiver);
+    }
+
+    public boolean in(WifiConfiguration w, List<ScanResult> scan) {
+        boolean flag = false;
+
+        for (ScanResult s : scan) {
+            if (w.SSID.replace("\"", "").equals(s.SSID)) {
+                flag = true;
+            }
+        }
+
+        return flag;
     }
 }

@@ -104,8 +104,9 @@ public class CreateProfile extends AppCompatActivity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
-        else
-            {
+        else {
+//            wifiManager.startScan();
+
             Intent myIntent=new Intent(this,AddWIFI.class);
 
             //Pass all info
