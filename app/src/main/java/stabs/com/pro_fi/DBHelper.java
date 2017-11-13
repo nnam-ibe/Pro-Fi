@@ -18,7 +18,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper mInstance = null;
 
     // General DB information
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
     private static final String DB_NAME = "Profile.db";
 
     // Profile Table
@@ -33,6 +33,8 @@ public class DBHelper extends SQLiteOpenHelper {
     // Wifi Table
     public static final String WIFI_TABLE = "WIFI_TABLE";
     public static final String WIFI_NAME = "WIFI_NAME";
+
+    public static final Integer MAX_VOLUME = 15;
 
     // Create Statements
     private static final String PROFILE_TABLE_CREATE = "CREATE TABLE " + PROFILE_TABLE + "("
@@ -64,11 +66,74 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(PROFILE_TABLE_CREATE);
         db.execSQL(WIFI_TABLE_CREATE);
+
+        ContentValues values = new ContentValues();
+        values.put(PROFILE_NAME, "Default");
+        values.put(PROFILE_RINGTONE, MAX_VOLUME);
+        values.put(PROFILE_MEDIA, MAX_VOLUME);
+        values.put(PROFILE_NOTIFICATIONS, MAX_VOLUME);
+        values.put(PROFILE_SYSTEM, MAX_VOLUME);
+        Long result = db.insert(PROFILE_TABLE, null, values);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Upgrades to the db should be done here.
+        if (oldVersion == 1) {
+            String profileName = "Default";
+
+            // Check if a profile exists with the name Default
+            String query = "SELECT " + PROFILE_NAME + " FROM " + PROFILE_TABLE +
+                    " WHERE " + PROFILE_NAME + " = '" + profileName + "'";
+            Cursor cursor = db.rawQuery(query,null);
+            if (cursor.getCount()!=0) {
+                ContentValues cValues = new ContentValues();
+                cValues.put(PROFILE_NAME, profileName + "_old");
+                String[] whereArgs =  new String[]{profileName};
+                db.update(PROFILE_TABLE, cValues, PROFILE_NAME + " =?", whereArgs);
+            }
+            cursor = db.query(PROFILE_TABLE,
+                    new String[]{PROFILE_NAME, PROFILE_RINGTONE, PROFILE_MEDIA, PROFILE_NOTIFICATIONS, PROFILE_SYSTEM},
+                    PROFILE_ID + "=?",
+                    new String[]{"1"},
+                    null, null, null, null);
+
+            Profile profile = null;
+            if(cursor!=null && cursor.moveToNext()) {
+                profile =  new Profile(1,
+                        cursor.getString(cursor.getColumnIndex(PROFILE_NAME)),
+                        null,
+                        cursor.getInt(cursor.getColumnIndex(PROFILE_RINGTONE)),
+                        cursor.getInt(cursor.getColumnIndex(PROFILE_MEDIA)),
+                        cursor.getInt(cursor.getColumnIndex(PROFILE_NOTIFICATIONS)),
+                        cursor.getInt(cursor.getColumnIndex(PROFILE_SYSTEM)));
+                cursor.close();
+            }
+
+            ContentValues values = new ContentValues();
+            values.put(PROFILE_NAME, profile.getName());
+            values.put(PROFILE_RINGTONE, profile.getRingtone());
+            values.put(PROFILE_MEDIA, profile.getMedia());
+            values.put(PROFILE_NOTIFICATIONS, profile.getNotification());
+            values.put(PROFILE_SYSTEM, profile.getSystem());
+
+            ContentValues renameProfile = new ContentValues();
+            renameProfile.put(PROFILE_NAME, "temp_name");
+            db.update(PROFILE_TABLE, renameProfile, PROFILE_ID + " =?", new String[]{"1"});
+            Long rowId = db.insert(PROFILE_TABLE, null, values);
+
+            ContentValues cv = new ContentValues();
+            cv.put(PROFILE_ID, rowId);
+            db.update(WIFI_TABLE, cv, PROFILE_ID + " =?", new String[]{profile.getId() + ""});
+
+            values = new ContentValues();
+            values.put(PROFILE_NAME, profileName);
+            values.put(PROFILE_RINGTONE, MAX_VOLUME);
+            values.put(PROFILE_MEDIA, MAX_VOLUME);
+            values.put(PROFILE_NOTIFICATIONS, MAX_VOLUME);
+            values.put(PROFILE_SYSTEM, MAX_VOLUME);
+            db.update(PROFILE_TABLE, values, PROFILE_ID + " =?", new String[]{"1"});
+            cursor.close();
+        }
     }
 
 
@@ -117,13 +182,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.delete(WIFI_TABLE, PROFILE_ID + "=?", new String[]{String.valueOf(profile.getId())});
 
-        for (String wifiName : wifiList) {
-            ContentValues wifiValues = new ContentValues();
-            wifiValues.put(PROFILE_ID, profile.getId());
-            wifiValues.put(WIFI_NAME, wifiName);
-            db.insert(WIFI_TABLE, null, wifiValues);
+        if (wifiList != null) {
+            for (String wifiName : wifiList) {
+                ContentValues wifiValues = new ContentValues();
+                wifiValues.put(PROFILE_ID, profile.getId());
+                wifiValues.put(WIFI_NAME, wifiName);
+                db.insert(WIFI_TABLE, null, wifiValues);
+            }
         }
-        // for debugging purposes
+
         return rowsAffected >0;
     }
 
@@ -249,8 +316,9 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Helper methjod to get a list of all profiles in the database
-     * @return An arraylist of all profiles, an empty list if there are no profiles.
+     * Helper method to get a list of all profiles in the database
+     * @return An arraylist of all profiles EXCEPT the DEFAULT PROFILE,
+     *          and an empty list if there are no profiles.
      */
     public ArrayList<Profile> getAllProfiles() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -259,7 +327,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.query(PROFILE_TABLE,
                 new String[]{PROFILE_ID, PROFILE_NAME, PROFILE_RINGTONE, PROFILE_MEDIA, PROFILE_NOTIFICATIONS, PROFILE_SYSTEM},
-                null, null, null, null, null, null);
+                PROFILE_ID + "!=?", new String[]{"1"}, null, null, null, null);
 
         while (cursor!=null && cursor.moveToNext()) {
             Profile profile =  new Profile(
