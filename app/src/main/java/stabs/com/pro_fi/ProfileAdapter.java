@@ -115,6 +115,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 int index = profileNames.indexOf(profile);
                 ProfileAdapter.this.notifyItemChanged(index);
                 ProfileAdapter.this.notifyItemChanged(holder.getAdapterPosition());
+                MainActivity.getInstance().highlightActiveProfile();
 
                 Toast.makeText(v.getContext(), profileName.getName() + " Activated", Toast.LENGTH_SHORT).show();
                 return true;

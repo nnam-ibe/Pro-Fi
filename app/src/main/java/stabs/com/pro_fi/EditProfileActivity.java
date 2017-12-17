@@ -2,6 +2,7 @@ package stabs.com.pro_fi;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -56,6 +57,9 @@ public class EditProfileActivity extends AppCompatActivity {
         profile = DBHelper.getInstance(this).getProfile(profileId);
 
         profileEditText.setText(profile.getName());
+        if (profileId == 1) {
+            profileEditText.setEnabled(false);
+        }
         ring.setProgress(profile.getRingtone());
         media.setProgress(profile.getMedia());
         notif.setProgress(profile.getNotification());
@@ -106,6 +110,24 @@ public class EditProfileActivity extends AppCompatActivity {
         } else if(!helper.isUnique(DBHelper.PROFILE_NAME, name, profile.getId())) {
             profileLayout.setError(getString(R.string.name_exists_errr));
             profileEditText.requestFocus();
+        } else if (profileId == 1) {
+            profile.setRingtone( ring.getProgress() );
+            profile.setMedia( media.getProgress() );
+            profile.setNotification( notif.getProgress() );
+            profile.setSystem( sys.getProgress() );
+
+            helper.updateProfile(profile, null);
+
+            SharedPreferences sharedPrefs = this.getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
+            boolean isAutomatic = sharedPrefs.getBoolean("AutomaticSelect", false);
+
+            if (isAutomatic) {
+                NetworkService networkService = new NetworkService(this);
+                networkService.checkConnection();
+            }
+
+            Intent myIntent=new Intent(this,MainActivity.class);
+            startActivity(myIntent);
         } else {
             Intent myIntent = new Intent(this,EditWIFI.class);
 

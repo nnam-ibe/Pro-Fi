@@ -182,13 +182,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.delete(WIFI_TABLE, PROFILE_ID + "=?", new String[]{String.valueOf(profile.getId())});
 
-        for (String wifiName : wifiList) {
-            ContentValues wifiValues = new ContentValues();
-            wifiValues.put(PROFILE_ID, profile.getId());
-            wifiValues.put(WIFI_NAME, wifiName);
-            db.insert(WIFI_TABLE, null, wifiValues);
+        if (wifiList != null) {
+            for (String wifiName : wifiList) {
+                ContentValues wifiValues = new ContentValues();
+                wifiValues.put(PROFILE_ID, profile.getId());
+                wifiValues.put(WIFI_NAME, wifiName);
+                db.insert(WIFI_TABLE, null, wifiValues);
+            }
         }
-        // for debugging purposes
+
         return rowsAffected >0;
     }
 
@@ -256,13 +258,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-//    /**
-//     * Helper method to get the default profile
-//     * @return
-//     */
-//    public Profile getDefaultProfile() {
-//    }
-
     /**
      * Helper method to retrieve a profile from the db, based on its wifiName
      * @param wifiName the name of the profile's WiFi
@@ -321,8 +316,9 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Helper methjod to get a list of all profiles in the database
-     * @return An arraylist of all profiles, an empty list if there are no profiles.
+     * Helper method to get a list of all profiles in the database
+     * @return An arraylist of all profiles EXCEPT the DEFAULT PROFILE,
+     *          and an empty list if there are no profiles.
      */
     public ArrayList<Profile> getAllProfiles() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -331,7 +327,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.query(PROFILE_TABLE,
                 new String[]{PROFILE_ID, PROFILE_NAME, PROFILE_RINGTONE, PROFILE_MEDIA, PROFILE_NOTIFICATIONS, PROFILE_SYSTEM},
-                null, null, null, null, null, null);
+                PROFILE_ID + "!=?", new String[]{"1"}, null, null, null, null);
 
         while (cursor!=null && cursor.moveToNext()) {
             Profile profile =  new Profile(

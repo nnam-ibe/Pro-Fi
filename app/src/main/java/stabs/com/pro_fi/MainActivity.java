@@ -1,24 +1,25 @@
 package stabs.com.pro_fi;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,19 +39,54 @@ public class MainActivity extends AppCompatActivity {
     MaterialTapTargetPrompt mSelProfilePrompt;
     private static final String COMPLETED_ONBOARDING_PREF_NAME = "Shlack";
     private static final String COMPLETED_ONBOARDING_FIRST_PROFILE = "Shlack2";
-    private static int count = 0; //no profile ever created.
-    private int firstProfile = -1; //position of the first ever profile created.
+    RecyclerView.Adapter mAdapter;
+    private SharedPreferences sharedPrefs;
+    private static MainActivity mInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final TextView switchstatus=(TextView) findViewById(R.id.switchStatus);
+        mInstance = this;
+
         SwitchCompat mainswitch = (SwitchCompat) findViewById(R.id.compatSwitch);
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
         list = DBHelper.getInstance(this).getAllProfiles();
-        boolean check;
         networkService = new NetworkService(this);
+        boolean check;
+
+        View defaultProfileCard = findViewById(R.id.default_profile);
+        defaultProfileCard.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                networkService.activateProfile(1);
+                Toast.makeText(v.getContext(), "Default Profile Activated", Toast.LENGTH_SHORT).show();
+                highlightActiveProfile();
+                return true;
+            }
+        });
+
+
+        final Button button = (Button) findViewById(R.id.default_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(v.getContext(), button);
+                popup.getMenuInflater().inflate(R.menu.default_menu, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (item.getTitle().equals("Edit")) {
+                            Intent myIntent = new Intent(MainActivity.this, EditProfileActivity.class);
+                            myIntent.putExtra(Profile.ID, 1);
+                            MainActivity.this.startActivity(myIntent);
+                        }
+                        return true;
+                    }
+                });
+                popup.setGravity(Gravity.RIGHT);
+                popup.show();
+            }
+        });
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         if (recyclerView != null)
@@ -58,11 +94,12 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(layoutManager);
-            RecyclerView.Adapter mAdapter = new ProfileAdapter(list, this);
+            mAdapter = new ProfileAdapter(list, this);
             recyclerView.setAdapter(mAdapter);
         }
-        SharedPreferences sharedPrefs = getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
+        sharedPrefs = getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
         check = sharedPrefs.getBoolean("AutomaticSelect", false);
+
         mainswitch.setChecked(check);
 
         mainswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -216,12 +253,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void add_method(View v){
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.startScan();
         Intent myIntent = new Intent(this,CreateProfile.class);
         startActivity(myIntent);
     }
 
     @Override
-    public void onResume() {super.onResume();}
+    public void onResume() {
+        super.onResume();
+        highlightActiveProfile();
+    }
+
+    public void highlightActiveProfile() {
+        int activeProfile = sharedPrefs.getInt(NetworkService.ACTIVE_PROFILE, -1);
+        View defaultProfileCard = findViewById(R.id.default_profile);
+        if ( activeProfile == 1 ) {
+            defaultProfileCard.setActivated(true);
+            mAdapter.notifyDataSetChanged();
+        } else {
+            defaultProfileCard.setActivated(false);
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -272,5 +325,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         killToast();
         super.onPause();
+    }
+
+    public static MainActivity getInstance() {
+        return mInstance;
     }
 }
