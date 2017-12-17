@@ -61,9 +61,12 @@ public class EditWIFI extends AppCompatActivity{
         wifis.toArray(array);
 
         for(int i=0;i<wifis.size();i++) {
-            names.add(array[i].SSID.replace("\"", ""));
+            if(!array[i].SSID.equals(wifi.getConnectionInfo().getSSID())){
+                names.add(array[i].SSID.replace("\"", ""));
+            }
         }
         Collections.sort(names);
+        names.add(0, wifi.getConnectionInfo().getSSID().replace("\"", ""));
 
         ArrayList<String> selectedWifiNames = DBHelper.getInstance(this).getProfileWifiList(profileId);
         boolean[] selectedWifis = new boolean[names.size()];

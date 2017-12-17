@@ -36,7 +36,6 @@ public class CreateProfile extends AppCompatActivity {
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
-
         profileLayout = (TextInputLayout)findViewById(R.id.name_layout);
         profileEditText = (TextInputEditText)findViewById(R.id.profile_name);
         Button backButton = (Button) findViewById(R.id.back_button);

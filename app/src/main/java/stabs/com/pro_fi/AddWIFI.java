@@ -37,72 +37,10 @@ public class AddWIFI extends AppCompatActivity {
     private WifiAdapter wifiAdapter;
     WifiManager wifi;
     List<WifiConfiguration> configuredWifis;
-    List<ScanResult> wifis, conf_wifis;
     List<String> names=new ArrayList <String>(); // NAMES OF WIFI
     RecyclerView recyclerView;
     Profile profile;
     final int REQUEST_PERMISSION_FINE_LOCATION = 1;
-    BroadcastReceiver receiver;
-
-
-    private class WifiReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.i(TAG, "onReceive: entered receive *************");
-
-            // Get scan result.
-            wifis = wifi.getScanResults();
-
-            // Check if any pre configured network is in scan result.
-            if (wifis.size() > 0 && configuredWifis != null) {
-
-                conf_wifis = new ArrayList<ScanResult>();
-
-                for (WifiConfiguration e : configuredWifis) {
-                    String e_SSID = e.SSID.replace("\"", "");
-                    for (ScanResult result : wifis) {
-
-                        // If match found,
-                        if (e_SSID.equals(result.SSID)) {
-
-                            // Add to conf_wifis if not already in conf_wifi.
-                            if (!conf_wifis.contains(result)) {
-
-                                conf_wifis.add(result);
-                            }
-                        }
-                    }
-                }
-
-                // Add other network names to names.
-                for (WifiConfiguration w : configuredWifis) {
-                    if (!in(w, conf_wifis)) {
-                        names.add(w.SSID.replace("\"", ""));
-                    }
-                }
-
-                //Sort scan result by signal strength.
-                Collections.sort(conf_wifis, new Comparator<ScanResult>(){
-                    @Override
-                    public int compare(ScanResult res1, ScanResult res2) {
-                        if (res1.level < res2.level) { return -1; }
-                        else if (res1.level > res2.level) { return 1; }
-                        else { return  0; }
-                    }
-                });
-
-                // Add sorted result names to top of names.
-                for (int i = conf_wifis.size()-1; i >= 0; --i) {
-                    String ssid = conf_wifis.get(i).SSID;
-                    if (!names.contains(ssid)) {
-                        names.add(0, ssid);
-                    }
-                }
-
-            }
-        }
-
-    }
 
 
     @Override
@@ -131,14 +69,18 @@ public class AddWIFI extends AppCompatActivity {
 
         wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         configuredWifis = wifi.getConfiguredNetworks();
+        WifiConfiguration [] array = new WifiConfiguration[configuredWifis.size()];
+        configuredWifis.toArray(array);
 
-        // Create and register receiver for wifi.startScan().
-        receiver = new WifiReceiver();
-        receiver.onReceive(this, getIntent());
+        for(int i=0;i<configuredWifis.size();i++) {
+            if(!array[i].SSID.equals(wifi.getConnectionInfo().getSSID())){
+                names.add(array[i].SSID.replace("\"", ""));
+            }
+        }
 
-        registerReceiver(receiver, new IntentFilter(wifi.SCAN_RESULTS_AVAILABLE_ACTION));
+        Collections.sort(names);
+        names.add(0, wifi.getConnectionInfo().getSSID().replace("\"", ""));
 
-        // Populate recyclerview.
         if (recyclerView != null) {
             recyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -146,7 +88,6 @@ public class AddWIFI extends AppCompatActivity {
             wifiAdapter = new WifiAdapter((ArrayList<String>) names);
             recyclerView.setAdapter(wifiAdapter);
         }
-
     }
 
     @Override
@@ -194,9 +135,6 @@ public class AddWIFI extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
-        // Unregister receiver.
-        unregisterReceiver(receiver);
     }
 
     public boolean in(WifiConfiguration w, List<ScanResult> scan) {
