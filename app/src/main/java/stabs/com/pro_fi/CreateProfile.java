@@ -8,8 +8,10 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.SeekBar;
 
@@ -19,6 +21,8 @@ public class CreateProfile extends AppCompatActivity {
     private TextInputEditText profileEditText;
     private SeekBar ring,notif,media,sys;
     private final int MAX_SEEK=15;
+    private static final String TAG ="CreateProfile";
+
     WifiManager wifiManager;
 
     private static boolean seekbarDisabled;
@@ -28,6 +32,14 @@ public class CreateProfile extends AppCompatActivity {
      */
     private int[] seekbarPrevValues;
 
+    public void hideSoftKeyboard(View v) {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            Log.i(TAG,"HIDE Keyboard");
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +50,9 @@ public class CreateProfile extends AppCompatActivity {
 
         profileLayout = (TextInputLayout)findViewById(R.id.name_layout);
         profileEditText = (TextInputEditText)findViewById(R.id.profile_name);
+
+
+
         Button backButton = (Button) findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,6 +145,7 @@ public class CreateProfile extends AppCompatActivity {
         @Override
         public void onProgressChanged(SeekBar seekBar, int val, boolean fromUser){
             s.setProgress(val);
+            hideSoftKeyboard(null);
             if ( (val==0) && (s.getId() == R.id.ringtone_seekbar) ){
                 seekbarPrevValues[0] = notif.getProgress();
                 seekbarPrevValues[1] = sys.getProgress();
@@ -154,4 +170,12 @@ public class CreateProfile extends AppCompatActivity {
         public  void onStopTrackingTouch(SeekBar seekBar){}
 
     }
+    private View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus) {
+                hideSoftKeyboard(null);
+            }
+        }
+    };
+
 }

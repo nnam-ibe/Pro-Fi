@@ -1,13 +1,17 @@
 package stabs.com.pro_fi;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.SeekBar;
 
@@ -21,6 +25,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private SeekBar ring,notif,media,sys;
     final int MAX_SEEK=15;
     float scale=1.4f;
+    private static final String TAG ="EditProfileActivity";
 
     private static boolean seekbarDisabled;
     /**
@@ -67,6 +72,7 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
+
         //Add listeners to seekbars
         ring.setOnSeekBarChangeListener(new SeekListener(ring));ring.setMax(MAX_SEEK);
         media.setOnSeekBarChangeListener(new SeekListener(media)); media.setMax(MAX_SEEK);
@@ -74,7 +80,16 @@ public class EditProfileActivity extends AppCompatActivity {
         sys.setOnSeekBarChangeListener(new SeekListener(sys));sys.setMax(MAX_SEEK);
     }
 
-    @Override
+    public void hideSoftKeyboard(View v) {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            Log.i(TAG,"HIDE Keyboard");
+        }
+    }
+
+        @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
@@ -128,7 +143,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
     // Listener class for seekbars
     class SeekListener implements SeekBar.OnSeekBarChangeListener{
-
         private SeekBar s;
 
         public SeekListener(SeekBar seekBar){
@@ -138,6 +152,7 @@ public class EditProfileActivity extends AppCompatActivity {
         @Override
         public void onProgressChanged(SeekBar seekBar, int val, boolean fromUser){
             s.setProgress(val);
+            hideSoftKeyboard(null);
             if ( (val==0) && (s.getId() == R.id.ringtone_seekbar) ){
                 seekbarPrevValues[0] = notif.getProgress();
                 seekbarPrevValues[1] = sys.getProgress();
