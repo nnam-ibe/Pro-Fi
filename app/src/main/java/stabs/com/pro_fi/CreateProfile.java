@@ -51,15 +51,8 @@ public class CreateProfile extends AppCompatActivity {
 
         profileLayout = (TextInputLayout)findViewById(R.id.name_layout);
         profileEditText = (TextInputEditText)findViewById(R.id.profile_name);
-        profileEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus)
-                {
-                    hideSoftKeyboard(null);
-                    Log.i(TAG,"NO FOCUS");
-                }
-            }
-        });
+
+
 
         Button backButton = (Button) findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
