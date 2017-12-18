@@ -30,10 +30,11 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 
         // If in manual mode, nothing to do here, return.
         if (isAutomatic) {
+            Log.i(TAG,"Triggered");
             NetworkService networkService = new NetworkService(context);
             networkService.checkConnection();
         } else {
-            Log.e(TAG, "In Manual Mode");
+            Log.i(TAG, "In Manual Mode");
         }
     }
 
