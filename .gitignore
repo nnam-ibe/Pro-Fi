@@ -9,3 +9,5 @@
 .idea/
 .projectFilesBackup/
 .projectFilesBackup1/
+*.apk
+*.keystore
