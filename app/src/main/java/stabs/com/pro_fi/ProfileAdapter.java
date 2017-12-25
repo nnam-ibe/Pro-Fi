@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -23,7 +24,8 @@ import static android.content.Context.MODE_PRIVATE;
 /**
  * Adapter to manage the recycler view.
  */
-public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
+public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder>
+    implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     //private Fragment mFragment;
     private static final String TAG ="ProfileAdapter";
@@ -31,17 +33,17 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     private NetworkService networkService;
     private SharedPreferences sharedPrefs;
     private Context context;
-    public ArrayList<Profile> profileNames;
+    private ArrayList<Profile> profileNames;
 
-    public ProfileAdapter(ArrayList<Profile> list, Context context)
-    {
+    public ProfileAdapter(ArrayList<Profile> list, Context context) {
         profileNames = list;
         networkService = new NetworkService(context);
-        sharedPrefs = context.getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
         this.context = context;
+        sharedPrefs = context.getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
+        sharedPrefs.registerOnSharedPreferenceChangeListener(this);
     }
 
-    public void delete_Diag(final View view, final int position) {
+    private void deleteDiag(final View view, final int position) {
         new AlertDialog.Builder(view.getContext())
                 .setMessage(context.getString(R.string.delete_profile))
                 .setPositiveButton(context.getString(R.string.delete), new DialogInterface.OnClickListener() {
@@ -72,18 +74,23 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         return profileNames.size();
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.w(TAG, key);
+        if (key.equals(NetworkService.ACTIVE_PROFILE)) {
+            ProfileAdapter.this.notifyDataSetChanged();
+        }
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public View v;
         public TextView textView;
         public Button button1;
-        public ViewHolder(View v)
-        {
+        public ViewHolder(View v) {
             super(v);
             this.v=v;
-            int size=profileNames.size();
             textView = (TextView)v.findViewById(R.id.name_text_view);
             button1 = (Button)v.findViewById(R.id.button);
-
         }
     }
 
@@ -115,7 +122,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 int index = profileNames.indexOf(profile);
                 ProfileAdapter.this.notifyItemChanged(index);
                 ProfileAdapter.this.notifyItemChanged(holder.getAdapterPosition());
-                MainActivity.getInstance().highlightActiveProfile();
 
                 Toast.makeText(v.getContext(), profileName.getName() + " Activated", Toast.LENGTH_SHORT).show();
                 return true;
@@ -134,10 +140,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getTitle().equals("Delete")) {
-                            delete_Diag(v, position);
+                            deleteDiag(v, position);
 
                         } else if (item.getTitle().equals("Edit")) {
-                            edit_Profile(v, position);
+                            editProfile(v, position);
                         }
                         return true;
                     }
@@ -149,12 +155,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         });
     }
 
-    //Switch to edit view
-    public void edit_Profile(final View view, final int position){
+    /**
+     * Start EditProfileActivity
+     */
+    private void editProfile(final View view, final int position){
         Intent myIntent = new Intent(view.getContext(), EditProfileActivity.class);
         myIntent.putExtra(Profile.ID, profileNames.get(position).getId());
-
         view.getContext().startActivity(myIntent);
     }
-
 }

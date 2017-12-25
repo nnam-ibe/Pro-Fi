@@ -86,7 +86,7 @@
         android:src="@drawable/ic_add"
         android:clickable="true"
         android:layout_alignParentEnd="true"
-        android:onClick="add_method"
+        android:onClick="addMethod"
         android:layout_alignParentBottom="true"
         app:backgroundTint="@color/colorPrimaryDark"
         android:elevation="40dp"/>

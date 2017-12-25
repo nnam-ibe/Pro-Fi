@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String TAG = "MainActivity";
     ArrayList<Profile> list;
@@ -55,38 +55,7 @@ public class MainActivity extends AppCompatActivity {
         networkService = new NetworkService(this);
         boolean check;
 
-        View defaultProfileCard = findViewById(R.id.default_profile);
-        defaultProfileCard.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                networkService.activateProfile(1);
-                Toast.makeText(v.getContext(), "Default Profile Activated", Toast.LENGTH_SHORT).show();
-                highlightActiveProfile();
-                return true;
-            }
-        });
-
-
-        final Button button = (Button) findViewById(R.id.default_button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu popup = new PopupMenu(v.getContext(), button);
-                popup.getMenuInflater().inflate(R.menu.default_menu, popup.getMenu());
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getTitle().equals("Edit")) {
-                            Intent myIntent = new Intent(MainActivity.this, EditProfileActivity.class);
-                            myIntent.putExtra(Profile.ID, 1);
-                            MainActivity.this.startActivity(myIntent);
-                        }
-                        return true;
-                    }
-                });
-                popup.setGravity(Gravity.RIGHT);
-                popup.show();
-            }
-        });
+        setUpDefaultProfileCard();
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         if (recyclerView != null)
@@ -98,10 +67,11 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setAdapter(mAdapter);
         }
         sharedPrefs = getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
+        sharedPrefs.registerOnSharedPreferenceChangeListener(this);
         check = sharedPrefs.getBoolean("AutomaticSelect", false);
 
-        mainswitch.setChecked(check);
 
+        mainswitch.setChecked(check);
         mainswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -120,9 +90,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
         // if first launch of the app
         if (!sharedPreferences.getBoolean(MainActivity.COMPLETED_ONBOARDING_PREF_NAME, false)){
             fab.setEnabled(false);
@@ -135,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
             if (recyclerView.getAdapter().getItemCount() == 1) {
                 showSelProfilePrompt(recyclerView);
             }
-
     }
 
     public void enableButtons(){
@@ -247,25 +214,66 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void add_method(View v){
+    public void addMethod(View v){
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifiManager.startScan();
         Intent myIntent = new Intent(this,CreateProfile.class);
         startActivity(myIntent);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        highlightActiveProfile();
+    /**
+     * Setup the card for the default profile
+     */
+    private void setUpDefaultProfileCard() {
+        View defaultProfileCard = findViewById(R.id.default_profile);
+        defaultProfileCard.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                networkService.activateProfile(1);
+                Toast.makeText(v.getContext(), "Default Profile Activated", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+
+        final Button defaultMenuButton = (Button) findViewById(R.id.default_button);
+        defaultMenuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(v.getContext(), defaultMenuButton);
+                popup.getMenuInflater().inflate(R.menu.default_menu, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (item.getTitle().equals("Edit")) {
+                            Intent myIntent = new Intent(MainActivity.this, EditProfileActivity.class);
+                            myIntent.putExtra(Profile.ID, 1);
+                            MainActivity.this.startActivity(myIntent);
+                        }
+                        return true;
+                    }
+                });
+                popup.setGravity(Gravity.RIGHT);
+                popup.show();
+            }
+        });
     }
 
-    public void highlightActiveProfile() {
+    private void showToast(String message) {
+        if (this.toast == null) {
+            // Create toast if found null, it would he the case of first call only
+            this.toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        } else if (this.toast.getView() == null) {
+            // Toast not showing, so create new one
+            this.toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        } else {
+            // Updating toast message is showing
+            this.toast.setText(message);
+        }
+
+        // Showing toast finally
+        this.toast.show();
+    }
+
+    private void highlightActiveProfile() {
         int activeProfile = sharedPrefs.getInt(NetworkService.ACTIVE_PROFILE, -1);
         View defaultProfileCard = findViewById(R.id.default_profile);
         if ( activeProfile == 1 ) {
@@ -274,6 +282,22 @@ public class MainActivity extends AppCompatActivity {
         } else {
             defaultProfileCard.setActivated(false);
         }
+    }
+
+    private void killToast() {
+        if (this.toast!= null) {
+            this.toast.cancel();
+        }
+    }
+
+    public static MainActivity getInstance() {
+        return mInstance;
+    }
+
+    @Override
+    protected void onPause() {
+        killToast();
+        super.onPause();
     }
 
     @Override
@@ -294,40 +318,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }, 2000);
         }
-
-    }
-
-    private void showToast(String message) {
-        if (this.toast == null) {
-            // Create toast if found null, it would he the case of first call only
-            this.toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-
-        } else if (this.toast.getView() == null) {
-            // Toast not showing, so create new one
-            this.toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-
-        } else {
-            // Updating toast message is showing
-            this.toast.setText(message);
-        }
-
-        // Showing toast finally
-        this.toast.show();
-    }
-
-    private void killToast() {
-        if (this.toast!= null) {
-            this.toast.cancel();
-        }
     }
 
     @Override
-    protected void onPause() {
-        killToast();
-        super.onPause();
-    }
-
-    public static MainActivity getInstance() {
-        return mInstance;
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.w(TAG, key);
+        if (key.equals(NetworkService.ACTIVE_PROFILE)) {
+            highlightActiveProfile();
+        }
     }
 }
