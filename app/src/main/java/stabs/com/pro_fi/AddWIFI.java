@@ -105,6 +105,7 @@ public class AddWIFI extends AppCompatActivity {
 
         if ( wifiAdapter.getSelectedWifis() == null ) {
             Toast.makeText(this, "Select a Wi-Fi", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         boolean isUnique = true;
