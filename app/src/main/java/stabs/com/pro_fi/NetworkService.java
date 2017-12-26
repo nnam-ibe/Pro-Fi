@@ -31,6 +31,10 @@ public class NetworkService {
         Profile profile = DBHelper.getInstance(context).getProfile(profileId);
         activateProfile(profile);
     }
+    public void activateProfile(int profileId, int longPress) {
+        Profile profile = DBHelper.getInstance(context).getProfile(profileId);
+        activateProfile(profile,longPress);
+    }
 
     /**
      * Activates the profile with WiFi name wifiName
@@ -74,6 +78,26 @@ public class NetworkService {
             Intent intent = new Intent(context, AudioService.class);
             context.startService(intent);
         }
+    }
+    //Method to activate profile when a profile card is long Pressed
+    public void activateProfile(Profile profile, int longPress) {
+        if (profile == null) {
+            Log.w(TAG, "No profile to connect to.");
+            return;
+        }
+
+            if (profile.getRingtone() == 0) {
+                myAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+            } else {
+                myAudioManager.setStreamVolume(AudioManager.STREAM_RING, profile.getRingtone(), 0);
+            }
+
+            myAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, profile.getNotification(), 0);
+            myAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, profile.getSystem(), 0);
+
+            SharedPreferences.Editor editor = context.getSharedPreferences("com.profi.xyz", MODE_PRIVATE).edit();
+            editor.putInt(ACTIVE_PROFILE, profile.getId());
+            editor.apply();
     }
     /**
      * Checks if there are any Profiles to connect to after a change in network state
