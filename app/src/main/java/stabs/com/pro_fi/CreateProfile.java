@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.SeekBar;
 
 public class CreateProfile extends AppCompatActivity {
@@ -20,8 +19,8 @@ public class CreateProfile extends AppCompatActivity {
     private TextInputLayout profileLayout;
     private TextInputEditText profileEditText;
     private SeekBar ring,notif,media,sys;
-    private final int MAX_SEEK=15;
-    private static final String TAG ="CreateProfile";
+    private final int MAX_SEEK = 15;
+    private static final String TAG = "CreateProfile";
 
     WifiManager wifiManager;
 
@@ -51,16 +50,6 @@ public class CreateProfile extends AppCompatActivity {
         profileLayout = (TextInputLayout)findViewById(R.id.name_layout);
         profileEditText = (TextInputEditText)findViewById(R.id.profile_name);
 
-
-
-        Button backButton = (Button) findViewById(R.id.back_button);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
         ring = (SeekBar) findViewById(R.id.ringtone_seekbar);
         notif = (SeekBar) findViewById(R.id.notifications_seekbar);
         media = (SeekBar) findViewById(R.id.media_seekbar);
@@ -84,6 +73,10 @@ public class CreateProfile extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void back(View view) {
+        onBackPressed();
+    }
+
 
     public void next(final View v) {
         boolean wifiEnabled = wifiManager.isWifiEnabled();
@@ -99,8 +92,7 @@ public class CreateProfile extends AppCompatActivity {
             profileLayout.setError(getString(R.string.name_exists_errr));
             profileEditText.requestFocus();
         }
-        else if(!wifiEnabled)
-        {
+        else if(!wifiEnabled) {
             new AlertDialog.Builder(this)
                     .setMessage("Please Turn on WIFI")
 //                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -134,7 +126,7 @@ public class CreateProfile extends AppCompatActivity {
     }
 
     // Listener class for seekbars
-    class SeekListener implements SeekBar.OnSeekBarChangeListener{
+    class SeekListener implements SeekBar.OnSeekBarChangeListener {
 
         SeekBar s;
 
@@ -143,7 +135,7 @@ public class CreateProfile extends AppCompatActivity {
         }
 
         @Override
-        public void onProgressChanged(SeekBar seekBar, int val, boolean fromUser){
+        public void onProgressChanged(SeekBar seekBar, int val, boolean fromUser) {
             s.setProgress(val);
             hideSoftKeyboard(null);
             if ( (val==0) && (s.getId() == R.id.ringtone_seekbar) ){

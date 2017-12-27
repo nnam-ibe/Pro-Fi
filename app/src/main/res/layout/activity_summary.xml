@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CreateProfile">
+    tools:context="stabs.com.pro_fi.SummaryActivity">
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -28,7 +28,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="textCapSentences"
                     android:textSize="20sp"
-                    android:focusableInTouchMode="true"
+                    android:enabled="false"
                     android:hint="@string/name"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -188,6 +188,36 @@
 
             </RelativeLayout>
 
+            <TextView
+                android:id="@+id/wifi_list_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/body_layout"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/selected_wifi_networks"
+                android:textColor="@color/teal"/>
+
+            <TextView
+                android:id="@+id/no_wifi_selected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/wifi_list_label"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/no_wifi_networks_selected"
+                android:textStyle="italic"
+                android:textSize="18sp"
+                android:visibility="gone"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/selected_wifis_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/wifi_list_label">
+
+            </android.support.v7.widget.RecyclerView>
+
         </RelativeLayout>
 
     </ScrollView>
@@ -212,12 +242,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="next"
+            android:onClick="saveProfile"
             style="?android:attr/buttonBarButtonStyle"
-            android:text="@string/next"/>
+            android:text="@string/finish"/>
 
 
     </LinearLayout>
-
 
 </RelativeLayout>

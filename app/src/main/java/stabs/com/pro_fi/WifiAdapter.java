@@ -14,10 +14,12 @@ import java.util.ArrayList;
 public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
     private ArrayList<String> wifiNames;
     private boolean[] selectedWifis;
+    private boolean clickIsDisabled;
 
     public WifiAdapter(ArrayList<String> list) {
         wifiNames = list;
         selectedWifis = new boolean[list.size()];
+        this.clickIsDisabled = false;
     }
 
     @Override
@@ -41,6 +43,10 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
                     }
                 }
         );
+
+        if (clickIsDisabled) {
+            holder.v.setClickable(false);
+        }
     }
 
     @Override
@@ -60,6 +66,10 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
 
     public void setSelectedWifis(boolean[] b) {
         this.selectedWifis = b;
+    }
+
+    public void setClickIsDisabled(boolean clickIsDisabled) {
+        this.clickIsDisabled = clickIsDisabled;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

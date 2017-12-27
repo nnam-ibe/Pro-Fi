@@ -34,4 +34,6 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="delete_profile">Delete Profile?</string>
     <string name="delete">Delete</string>
+    <string name="selected_wifi_networks">Selected WiFi networks</string>
+    <string name="no_wifi_networks_selected">No WiFi networks selected</string>
 </resources>

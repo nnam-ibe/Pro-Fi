@@ -1,34 +1,22 @@
 package stabs.com.pro_fi;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.jar.Manifest;
 
 public class AddWIFI extends AppCompatActivity {
 
@@ -40,7 +28,6 @@ public class AddWIFI extends AppCompatActivity {
     List<String> names=new ArrayList <String>(); // NAMES OF WIFI
     RecyclerView recyclerView;
     Profile profile;
-    final int REQUEST_PERMISSION_FINE_LOCATION = 1;
 
 
     @Override
@@ -100,8 +87,8 @@ public class AddWIFI extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void saveProfile(View v){
-        DBHelper helper= DBHelper.getInstance(this);
+    public void showOverview(View v) {
+        DBHelper helper = DBHelper.getInstance(this);
 
         if ( wifiAdapter.getSelectedWifis() == null ) {
             Toast.makeText(this, "Select a Wi-Fi", Toast.LENGTH_SHORT).show();
@@ -109,33 +96,24 @@ public class AddWIFI extends AppCompatActivity {
         }
 
         boolean isUnique = true;
-        for (String wifiName:wifiAdapter.getSelectedWifis()) {
+        for (String wifiName : wifiAdapter.getSelectedWifis()) {
             isUnique &= helper.isUnique(DBHelper.WIFI_NAME, wifiName, -1);
         }
 
         if(!isUnique) {
             Toast.makeText(this, "Wi-Fi already in use", Toast.LENGTH_SHORT).show();
-        } else {
-            //Write contents profileInfo to DB.
-            helper.insertProfile(profile, wifiAdapter.getSelectedWifis());
-
-            SharedPreferences sharedPrefs = this.getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
-            boolean isAutomatic = sharedPrefs.getBoolean("AutomaticSelect", false);
-
-            // Activate New Profile, Ask if they want profile active??
-            if (isAutomatic) {
-                NetworkService networkService = new NetworkService(this);
-                networkService.checkConnection();
-            }
-            //Switch to Home screen
-            Intent myIntent=new Intent(this,MainActivity.class);
-            startActivity(myIntent);
+            return;
         }
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
+        Intent myIntent = new Intent(this, SummaryActivity.class);
+        myIntent.putExtra(Profile.NAME, profile.getName());
+        myIntent.putExtra(Profile.RINGTONE, profile.getRingtone());
+        myIntent.putExtra(Profile.MEDIA, profile.getMedia());
+        myIntent.putExtra(Profile.NOTIFICATION, profile.getNotification());
+        myIntent.putExtra(Profile.SYSTEM, profile.getSystem());
+        myIntent.putExtra(Profile.WIFI, wifiAdapter.getSelectedWifis());
+        myIntent.putExtra(SummaryActivity.IS_NEW_PROFILE, true);
+        startActivity(myIntent);
     }
 
     public boolean in(WifiConfiguration w, List<ScanResult> scan) {

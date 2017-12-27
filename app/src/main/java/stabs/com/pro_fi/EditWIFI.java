@@ -2,7 +2,6 @@ package stabs.com.pro_fi;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -96,30 +95,31 @@ public class EditWIFI extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
-    public void saveProfile(View v){
+    public void showOverview(View v) {
         DBHelper helper = DBHelper.getInstance(this);
 
+        if ( wifiAdapter.getSelectedWifis() == null ) {
+            Toast.makeText(this, "Select a Wi-Fi", Toast.LENGTH_SHORT).show();
+        }
+
         boolean isUnique = true;
-        for (String wifiName:wifiAdapter.getSelectedWifis()) {
+        for (String wifiName : wifiAdapter.getSelectedWifis()) {
             isUnique &= helper.isUnique(DBHelper.WIFI_NAME, wifiName, profile.getId());
         }
 
-        if (isUnique) {
-            helper.updateProfile(profile, wifiAdapter.getSelectedWifis());
-            Toast.makeText(this, profile.getName() + " updated", Toast.LENGTH_SHORT).show();
-            SharedPreferences sharedPrefs = this.getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
-            boolean isAutomatic = sharedPrefs.getBoolean("AutomaticSelect", false);
-
-            // Activate New Profile, Ask if they want profile active??
-            if (isAutomatic) {
-                NetworkService networkService = new NetworkService(this);
-                networkService.checkConnection();
-            }
-            //Switch to Home screenc
-            Intent myIntent=new Intent(this,MainActivity.class);
-            startActivity(myIntent);
-        } else {
-            Toast.makeText(this, "WiFi name taken", Toast.LENGTH_SHORT).show();
+        if(!isUnique) {
+            Toast.makeText(this, "Wi-Fi already in use", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        Intent myIntent = new Intent(this, SummaryActivity.class);
+        myIntent.putExtra(Profile.NAME, profile.getName());
+        myIntent.putExtra(Profile.RINGTONE, profile.getRingtone());
+        myIntent.putExtra(Profile.MEDIA, profile.getMedia());
+        myIntent.putExtra(Profile.NOTIFICATION, profile.getNotification());
+        myIntent.putExtra(Profile.SYSTEM, profile.getSystem());
+        myIntent.putExtra(Profile.WIFI, wifiAdapter.getSelectedWifis());
+        myIntent.putExtra(SummaryActivity.IS_NEW_PROFILE, false);
+        startActivity(myIntent);
     }
 }
