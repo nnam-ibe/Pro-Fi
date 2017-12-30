@@ -117,7 +117,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             @Override
             public boolean onLongClick(View v) {
                 int activeProfile = sharedPrefs.getInt(NetworkService.ACTIVE_PROFILE, -1);
-                networkService.activateProfile(profileName);
+                networkService.activateProfile(profileName,0);
                 Profile profile = DBHelper.getInstance(context).getProfile(activeProfile);
                 int index = profileNames.indexOf(profile);
                 ProfileAdapter.this.notifyItemChanged(index);

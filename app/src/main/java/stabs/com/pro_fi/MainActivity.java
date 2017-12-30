@@ -56,6 +56,39 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         boolean check;
 
         setUpDefaultProfileCard();
+        View defaultProfileCard = findViewById(R.id.default_profile);
+        defaultProfileCard.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                networkService.activateProfile(1,0);
+                Toast.makeText(v.getContext(), "Default Profile Activated", Toast.LENGTH_SHORT).show();
+                highlightActiveProfile();
+                return true;
+            }
+        });
+        highlightActiveProfile();
+
+
+        final Button button = (Button) findViewById(R.id.default_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(v.getContext(), button);
+                popup.getMenuInflater().inflate(R.menu.default_menu, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (item.getTitle().equals("Edit")) {
+                            Intent myIntent = new Intent(MainActivity.this, EditProfileActivity.class);
+                            myIntent.putExtra(Profile.ID, 1);
+                            MainActivity.this.startActivity(myIntent);
+                        }
+                        return true;
+                    }
+                });
+                popup.setGravity(Gravity.RIGHT);
+                popup.show();
+            }
+        });
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         if (recyclerView != null)
