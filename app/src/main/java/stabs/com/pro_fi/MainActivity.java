@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 return true;
             }
         });
+        highlightActiveProfile();
 
 
         final Button button = (Button) findViewById(R.id.default_button);
