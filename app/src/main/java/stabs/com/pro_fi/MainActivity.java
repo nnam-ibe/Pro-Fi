@@ -66,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 return true;
             }
         });
-        highlightActiveProfile();
-
 
         final Button button = (Button) findViewById(R.id.default_button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         sharedPrefs = getSharedPreferences("com.profi.xyz", MODE_PRIVATE);
         sharedPrefs.registerOnSharedPreferenceChangeListener(this);
         check = sharedPrefs.getBoolean("AutomaticSelect", false);
-
+        highlightActiveProfile();
 
         mainswitch.setChecked(check);
         mainswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
