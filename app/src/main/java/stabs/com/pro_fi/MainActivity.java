@@ -41,13 +41,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private static final String COMPLETED_ONBOARDING_FIRST_PROFILE = "Shlack2";
     RecyclerView.Adapter mAdapter;
     private SharedPreferences sharedPrefs;
-    private static MainActivity mInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mInstance = this;
 
         SwitchCompat mainswitch = (SwitchCompat) findViewById(R.id.compatSwitch);
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
@@ -319,10 +317,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (this.toast!= null) {
             this.toast.cancel();
         }
-    }
-
-    public static MainActivity getInstance() {
-        return mInstance;
     }
 
     @Override
