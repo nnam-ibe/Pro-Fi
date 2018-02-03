@@ -32,6 +32,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnTouchLi
         setContentView(R.layout.activity_summary);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        isNewProfile = getIntent().getBooleanExtra(IS_NEW_PROFILE, true);
         retrieveProfile();
 
         TextInputEditText profileEditText = (TextInputEditText) findViewById(R.id.profile_name);
@@ -73,8 +74,6 @@ public class SummaryActivity extends AppCompatActivity implements View.OnTouchLi
             wifiAdapter.setClickIsDisabled(true);
             recyclerView.setAdapter(wifiAdapter);
         }
-
-        isNewProfile = getIntent().getBooleanExtra(IS_NEW_PROFILE, true);
     }
 
     @Override
@@ -88,18 +87,14 @@ public class SummaryActivity extends AppCompatActivity implements View.OnTouchLi
     }
 
     private void retrieveProfile() {
-        int profileId = getIntent().getIntExtra(Profile.ID, -1);
-        if (profileId == -1) {
-            profile = new Profile(
-                    getIntent().getStringExtra(Profile.NAME),
-                    null,
-                    getIntent().getIntExtra(Profile.RINGTONE, 0),
-                    getIntent().getIntExtra(Profile.MEDIA, 0),
-                    getIntent().getIntExtra(Profile.NOTIFICATION, 0),
-                    getIntent().getIntExtra(Profile.SYSTEM, 0));
-        } else {
-            profile = DBHelper.getInstance(this).getProfile(profileId);
-        }
+        profile = new Profile(
+                getIntent().getIntExtra(Profile.ID, -1),
+                getIntent().getStringExtra(Profile.NAME),
+                null,
+                getIntent().getIntExtra(Profile.RINGTONE, 0),
+                getIntent().getIntExtra(Profile.MEDIA, 0),
+                getIntent().getIntExtra(Profile.NOTIFICATION, 0),
+                getIntent().getIntExtra(Profile.SYSTEM, 0));
 
         selectedWifis = getIntent().getStringArrayListExtra(Profile.WIFI);
         Log.w(TAG, "There are " +  selectedWifis.size() + " wifis selected.");

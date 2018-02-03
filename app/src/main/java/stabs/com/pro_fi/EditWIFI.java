@@ -46,7 +46,8 @@ public class EditWIFI extends AppCompatActivity{
         });
 
         int profileId = getIntent().getIntExtra(Profile.ID, -1);
-        profile = new Profile(getIntent().getIntExtra(Profile.ID, -1),
+        profile = new Profile(
+                profileId,
                 getIntent().getStringExtra(Profile.NAME),
                 null,
                 getIntent().getIntExtra(Profile.RINGTONE, 0),
@@ -113,6 +114,7 @@ public class EditWIFI extends AppCompatActivity{
         }
 
         Intent myIntent = new Intent(this, SummaryActivity.class);
+        myIntent.putExtra(Profile.ID, profile.getId());
         myIntent.putExtra(Profile.NAME, profile.getName());
         myIntent.putExtra(Profile.RINGTONE, profile.getRingtone());
         myIntent.putExtra(Profile.MEDIA, profile.getMedia());
